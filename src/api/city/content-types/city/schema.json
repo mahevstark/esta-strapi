@@ -1,11 +1,10 @@
 {
   "kind": "collectionType",
-  "collectionName": "units",
+  "collectionName": "cities",
   "info": {
-    "singularName": "unit",
-    "pluralName": "units",
-    "displayName": "unit",
-    "description": ""
+    "singularName": "city",
+    "pluralName": "cities",
+    "displayName": "city"
   },
   "options": {
     "draftAndPublish": true
@@ -17,20 +16,20 @@
   },
   "attributes": {
     "title": {
-      "type": "string",
-      "required": true,
-      "unique": false,
       "pluginOptions": {
         "i18n": {
           "localized": true
         }
-      }
+      },
+      "type": "string",
+      "unique": false,
+      "required": true
     },
-    "product": {
+    "areas": {
       "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::product.product",
-      "mappedBy": "unit"
+      "relation": "oneToMany",
+      "target": "api::area.area",
+      "mappedBy": "city"
     }
   }
 }

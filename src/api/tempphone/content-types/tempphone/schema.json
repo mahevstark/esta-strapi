@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "tempphones",
+  "info": {
+    "singularName": "tempphone",
+    "pluralName": "tempphones",
+    "displayName": "tempphone",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "phoneNumber": {
+      "type": "string"
+    },
+    "slip": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "biginteger"
+    },
+    "sid": {
+      "type": "string"
+    }
+  }
+}

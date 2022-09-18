@@ -1,11 +1,10 @@
 {
   "kind": "collectionType",
-  "collectionName": "units",
+  "collectionName": "attributes",
   "info": {
-    "singularName": "unit",
-    "pluralName": "units",
-    "displayName": "unit",
-    "description": ""
+    "singularName": "attribute",
+    "pluralName": "attributes",
+    "displayName": "attribute"
   },
   "options": {
     "draftAndPublish": true
@@ -18,8 +17,8 @@
   "attributes": {
     "title": {
       "type": "string",
+      "unique": true,
       "required": true,
-      "unique": false,
       "pluginOptions": {
         "i18n": {
           "localized": true
@@ -28,9 +27,9 @@
     },
     "product": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "manyToOne",
       "target": "api::product.product",
-      "mappedBy": "unit"
+      "inversedBy": "attributes"
     }
   }
 }
