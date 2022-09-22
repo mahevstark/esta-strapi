@@ -1,0 +1,38 @@
+{
+  "collectionName": "components_relative_relatives",
+  "info": {
+    "displayName": "relative",
+    "icon": "user-shield"
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "cnic": {
+      "type": "string"
+    },
+    "current_address": {
+      "type": "string"
+    },
+    "permanent_address": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "image": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": true
+    }
+  }
+}

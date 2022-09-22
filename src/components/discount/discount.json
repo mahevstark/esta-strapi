@@ -1,0 +1,32 @@
+{
+  "collectionName": "components_discount_discounts",
+  "info": {
+    "displayName": "discount",
+    "icon": "backspace"
+  },
+  "options": {},
+  "attributes": {
+    "discount_type": {
+      "type": "enumeration",
+      "enum": [
+        "none",
+        "flat",
+        "percentage"
+      ],
+      "default": "none",
+      "required": true
+    },
+    "discount": {
+      "type": "decimal",
+      "default": 0,
+      "min": 0,
+      "required": false
+    },
+    "label": {
+      "type": "string"
+    },
+    "description": {
+      "type": "text"
+    }
+  }
+}

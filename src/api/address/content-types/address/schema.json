@@ -34,6 +34,12 @@
     "default": {
       "type": "boolean",
       "default": false
+    },
+    "order": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::order.order",
+      "mappedBy": "address"
     }
   }
 }

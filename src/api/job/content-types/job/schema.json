@@ -1,0 +1,50 @@
+{
+  "kind": "collectionType",
+  "collectionName": "jobs",
+  "info": {
+    "singularName": "job",
+    "pluralName": "jobs",
+    "displayName": "job"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "comment": {
+      "type": "text"
+    },
+    "order": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::order.order",
+      "inversedBy": "job"
+    },
+    "boy": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::boy.boy"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "pending",
+        "accepted",
+        "rejected",
+        "coming_to_pickup",
+        "going_to_dropoff",
+        "knocking",
+        "dropped_off",
+        "failed"
+      ],
+      "default": "pending",
+      "required": true
+    },
+    "job_updates": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::job-update.job-update",
+      "mappedBy": "job"
+    }
+  }
+}

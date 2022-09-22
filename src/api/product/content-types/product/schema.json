@@ -146,6 +146,26 @@
           "localized": false
         }
       }
+    },
+    "tags": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "string"
+    },
+    "favorite": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::favorite.favorite",
+      "inversedBy": "product"
+    },
+    "order_product": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::order-product.order-product",
+      "inversedBy": "product"
     }
   }
 }

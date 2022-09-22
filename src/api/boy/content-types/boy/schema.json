@@ -1,0 +1,127 @@
+{
+  "kind": "collectionType",
+  "collectionName": "boys",
+  "info": {
+    "singularName": "boy",
+    "pluralName": "boys",
+    "displayName": "boy",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "phone": {
+      "type": "string",
+      "unique": true,
+      "required": true
+    },
+    "cnic": {
+      "type": "string",
+      "unique": true,
+      "required": true
+    },
+    "driving_license": {
+      "type": "text"
+    },
+    "license_type": {
+      "type": "enumeration",
+      "enum": [
+        "final",
+        "learning"
+      ],
+      "default": "learning",
+      "required": true
+    },
+    "license_images": {
+      "type": "media",
+      "multiple": true,
+      "required": true,
+      "allowedTypes": [
+        "images",
+        "videos",
+        "audios",
+        "files"
+      ]
+    },
+    "cninc_images": {
+      "type": "media",
+      "multiple": true,
+      "required": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "nickname": {
+      "type": "string"
+    },
+    "permanent_address": {
+      "type": "text"
+    },
+    "current_address": {
+      "type": "text"
+    },
+    "relative": {
+      "displayName": "relative",
+      "type": "component",
+      "repeatable": true,
+      "component": "relative.relative"
+    },
+    "images": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "profile_picture": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "boy_uid": {
+      "type": "uid",
+      "required": true
+    },
+    "account_type": {
+      "type": "enumeration",
+      "enum": [
+        "basic",
+        "friend",
+        "loyal",
+        "family"
+      ],
+      "default": "basic"
+    },
+    "account_status": {
+      "type": "enumeration",
+      "enum": [
+        "pending",
+        "active",
+        "inactive",
+        "temprary_banned",
+        "banned"
+      ],
+      "default": "pending",
+      "required": true
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "job_updates",
+  "info": {
+    "singularName": "job-update",
+    "pluralName": "job-updates",
+    "displayName": "job update"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "label": {
+      "type": "string"
+    },
+    "job": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::job.job",
+      "inversedBy": "job_updates"
+    },
+    "private_label": {
+      "type": "string",
+      "private": true
+    }
+  }
+}
