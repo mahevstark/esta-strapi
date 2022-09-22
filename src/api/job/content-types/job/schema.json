@@ -18,7 +18,7 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::order.order",
-      "inversedBy": "job"
+      "mappedBy": "job"
     },
     "boy": {
       "type": "relation",

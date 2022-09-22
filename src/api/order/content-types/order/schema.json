@@ -61,11 +61,6 @@
         "mix"
       ]
     },
-    "order_uid": {
-      "type": "string",
-      "required": true,
-      "unique": true
-    },
     "order_products": {
       "type": "relation",
       "relation": "oneToMany",
@@ -100,6 +95,15 @@
       "relation": "oneToOne",
       "target": "api::job.job",
       "inversedBy": "order"
+    },
+    "notes": {
+      "type": "text"
+    },
+    "order_uid": {
+      "type": "biginteger",
+      "default": "0",
+      "unique": true,
+      "required": false
     }
   }
 }
