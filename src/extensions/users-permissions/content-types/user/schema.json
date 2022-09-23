@@ -74,11 +74,11 @@
     "name": {
       "type": "string"
     },
-    "areas": {
+    "area": {
       "type": "relation",
-      "relation": "manyToMany",
+      "relation": "oneToOne",
       "target": "api::area.area",
-      "inversedBy": "users"
+      "inversedBy": "user"
     },
     "addresses": {
       "type": "relation",

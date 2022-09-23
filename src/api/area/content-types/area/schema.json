@@ -30,11 +30,23 @@
       "target": "api::city.city",
       "inversedBy": "areas"
     },
-    "users": {
+    "user": {
       "type": "relation",
-      "relation": "manyToMany",
+      "relation": "oneToOne",
       "target": "plugin::users-permissions.user",
-      "inversedBy": "areas"
+      "inversedBy": "area"
+    },
+    "charges": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::charge.charge",
+      "mappedBy": "area"
+    },
+    "order": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::order.order",
+      "mappedBy": "area"
     }
   }
 }

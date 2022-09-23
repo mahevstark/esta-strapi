@@ -104,6 +104,18 @@
       "default": "0",
       "unique": true,
       "required": false
+    },
+    "area": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::area.area",
+      "inversedBy": "order"
+    },
+    "bill": {
+      "type": "decimal",
+      "default": 0,
+      "required": true,
+      "min": 0
     }
   }
 }
