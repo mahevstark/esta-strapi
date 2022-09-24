@@ -122,6 +122,23 @@
       ],
       "default": "pending",
       "required": true
+    },
+    "password": {
+      "type": "text",
+      "private": true,
+      "required": true
+    },
+    "reset_token": {
+      "type": "text",
+      "private": true
+    },
+    "token": {
+      "type": "text"
+    },
+    "online": {
+      "type": "boolean",
+      "default": false,
+      "required": true
     }
   }
 }
