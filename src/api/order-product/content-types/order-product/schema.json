@@ -44,6 +44,12 @@
     },
     "notes": {
       "type": "text"
+    },
+    "order_complain": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::order-complain.order-complain",
+      "inversedBy": "order_product"
     }
   }
 }

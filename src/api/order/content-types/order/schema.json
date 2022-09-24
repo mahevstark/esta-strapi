@@ -43,7 +43,9 @@
         "packing",
         "coming",
         "knocking",
-        "delivered"
+        "delivered",
+        "cancelled_by_user",
+        "cancelled_by_store"
       ],
       "default": "processing",
       "required": true
@@ -116,6 +118,12 @@
       "default": 0,
       "required": true,
       "min": 0
+    },
+    "order_complain": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::order-complain.order-complain",
+      "inversedBy": "order"
     }
   }
 }

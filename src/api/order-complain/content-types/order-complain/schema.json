@@ -1,0 +1,47 @@
+{
+  "kind": "collectionType",
+  "collectionName": "order_complains",
+  "info": {
+    "singularName": "order-complain",
+    "pluralName": "order-complains",
+    "displayName": "order complain"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "order": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::order.order",
+      "inversedBy": "order_complain"
+    },
+    "order_product": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::order-product.order-product",
+      "inversedBy": "order_complain"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "working",
+        "solved",
+        "closed"
+      ],
+      "default": "working",
+      "required": true
+    },
+    "complain": {
+      "type": "text",
+      "required": false
+    },
+    "complain_comment": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::complain-comment.complain-comment",
+      "mappedBy": "order_complain"
+    }
+  }
+}

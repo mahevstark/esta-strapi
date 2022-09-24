@@ -147,15 +147,17 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
         // coming
         // knocking
         // delivered
-        const statuses_list = [ 'processing', 'confirmed', 'assigning', 'packing', 'coming', 'knocking', 'delivered' ];
+        const statuses_list = [ 'processing', 'confirmed', 'assigning', 'packing', 'coming', 'knocking', 'delivered','cancelled_by_user', 'cancelled_by_store'];
         let statuses = []
         if (type === 'all') {
             statuses = statuses_list;
         }else if(type=='active'){
             statuses = [ 'processing', 'confirmed', 'assigning', 'packing', 'coming', 'knocking' ];
+        }else if(type=='cancelled'){
+            statuses = ['cancelled_by_user', 'cancelled_by_store' ];
         }
 
-        const limit = 1;
+        const limit = 20;
 
         const orders = await strapi.db.query('api::order.order').findWithCount({
             where:type=='scheduled'?{users_permissions_user: id, scheduled:true, status:'processing'}:{users_permissions_user: id, status :{
@@ -166,10 +168,29 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
             start: (page-1)*limit,
         });
 
-        console.log(page)
-
         const more_avalaible = (orders[1] > ((page-1)*limit))
         return {orders:orders[0],total:orders[1],more_avalaible};
+    },
+
+    async cancelorder(ctx) {
+        const { id } = ctx.state.user;
+        const {order_id} = ctx.request.body;
+        const order = await strapi.db.query('api::order.order').findOne({
+            where:{
+                id:order_id,
+                users_permissions_user: id
+            }
+        });
+        if(!order) {
+            return ctx.badRequest('Order not found');
+        }
+
+        if(order.status!=='processing') {
+            return ctx.badRequest('Order cannot be cancelled');
+        }
+        const x = await strapi.entityService.update('api::order.order',order_id, {data: {status:'cancelled_by_user'}});
+        console.log('x',x);
+        return {message:'Order cancelled successfully'};
     }
 
 }));

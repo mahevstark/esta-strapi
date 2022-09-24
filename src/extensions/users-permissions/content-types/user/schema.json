@@ -97,6 +97,12 @@
       "relation": "oneToMany",
       "target": "api::order.order",
       "mappedBy": "users_permissions_user"
+    },
+    "complain_comment": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::complain-comment.complain-comment",
+      "inversedBy": "users_permissions_user"
     }
   }
 }

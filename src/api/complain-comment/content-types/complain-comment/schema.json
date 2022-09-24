@@ -1,0 +1,31 @@
+{
+  "kind": "collectionType",
+  "collectionName": "complain_comments",
+  "info": {
+    "singularName": "complain-comment",
+    "pluralName": "complain-comments",
+    "displayName": "complain comment",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "comment": {
+      "type": "text"
+    },
+    "order_complain": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::order-complain.order-complain",
+      "inversedBy": "complain_comment"
+    },
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "complain_comment"
+    }
+  }
+}

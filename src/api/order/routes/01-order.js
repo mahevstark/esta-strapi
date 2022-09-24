@@ -10,6 +10,11 @@ module.exports = {
             method: 'GET',
             path: '/orders/mine',
             handler: 'order.mine',
+        },
+        { 
+            method: 'POST',
+            path: '/orders/cancel',
+            handler: 'order.cancelorder',
         }
     ]
 }
