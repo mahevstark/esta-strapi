@@ -65,6 +65,10 @@ module.exports = plugin => {
 
 
     plugin.controllers.user.updateme3 = async (ctx) => {
+
+        const {locale} = ctx.params;
+        const isUrdu = locale === 'ur-PK';
+
         const advancedConfigs = await strapi
             .store({ type: 'plugin', name: 'users-permissions', key: 'advanced' })
             .get();
@@ -123,6 +127,8 @@ module.exports = plugin => {
             try {
                 const provider = ctx.params.provider || 'twillio';
                 const params = ctx.request.body;
+                const {locale} = ctx.params;
+                const isUrdu = locale === 'ur-PK';
 
 
 
@@ -226,6 +232,8 @@ module.exports = plugin => {
                                 },
                             });
 
+                            const blocked = !isUrdu ? 'Your account has been blocked by an administrator': 'آپ کا اکاؤنٹ ایڈمنسٹریٹر کی طرف سے بلاک کر دیا گیا ہے';
+
                             if (!user) {
 
                                 const pluginStore = await strapi.store({ type: 'plugin', name: 'users-permissions' });
@@ -256,9 +264,9 @@ module.exports = plugin => {
 
                                 const user = await getService('user').add(newUser);
 
-
+                                
                                 if (user.blocked === true) {
-                                    throw new ApplicationError('Your account has been blocked by an administrator');
+                                    throw new ApplicationError(blocked);
                                 }
 
 
@@ -272,7 +280,7 @@ module.exports = plugin => {
 
 
                                 if (user.blocked === true) {
-                                    throw new ApplicationError('Your account has been blocked by an administrator');
+                                    throw new ApplicationError(blocked);
                                 }
 
                                 return ctx.send({
@@ -282,7 +290,7 @@ module.exports = plugin => {
                             }
                         } else {
 
-                            throw new ApplicationError('Invalid code');
+                            throw new ApplicationError(!isUrdu?'Invalid code':'غلط کوڈ');
                         }
 
                     }
