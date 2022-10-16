@@ -21,7 +21,7 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::product.product",
-      "inversedBy": "order_product"
+      "mappedBy": "order_product"
     },
     "qty": {
       "default": 1,

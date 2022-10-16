@@ -31,7 +31,7 @@ module.exports = createCoreController('api::product.product', ({strapi})=>({
             })
             a.attributes.attributes = as;
             console.log(d.attributes.attributes)
-            a.attributes.unit = d.attributes.unit.data.attributes.title;
+            a.attributes.unit = d.attributes.unit.data?.attributes?.title || "Uknown";
             a.attributes.image = i;
             return a;
         })
