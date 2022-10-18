@@ -4,7 +4,8 @@
   "info": {
     "singularName": "area",
     "pluralName": "areas",
-    "displayName": "area"
+    "displayName": "area",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -36,11 +37,11 @@
       "target": "plugin::users-permissions.user",
       "inversedBy": "area"
     },
-    "charges": {
+    "charge": {
       "type": "relation",
-      "relation": "oneToMany",
+      "relation": "manyToOne",
       "target": "api::charge.charge",
-      "mappedBy": "area"
+      "inversedBy": "areas"
     },
     "order": {
       "type": "relation",

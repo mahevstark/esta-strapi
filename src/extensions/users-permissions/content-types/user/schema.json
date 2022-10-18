@@ -78,7 +78,7 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::area.area",
-      "inversedBy": "user"
+      "mappedBy": "user"
     },
     "addresses": {
       "type": "relation",
