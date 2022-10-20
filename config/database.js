@@ -16,7 +16,7 @@ module.exports = ({ env }) => ({
       database: env('DATABASE_NAME', 'estav2'),
       user: env('DATABASE_USERNAME', 'root'),
       password: env('DATABASE_PASSWORD', 'mysql'),
-      ssl: env.bool('DATABASE_SSL', false),
+      ssl: env.bool('DATABASE_SSL', true),
     },
   },
 });
