@@ -146,7 +146,7 @@ module.exports = plugin => {
 
                     console.log(' iwth twillio');
 
-                    const { phoneNumber, slip, code, channel } = params ?? { slip: '', phoneNumber: '', code: '', channel:'sms' };
+                    const { phoneNumber, slip, code, channel, name } = params ?? { slip: '', phoneNumber: '', code: '', channel:'sms', name:'Esta user' };
 
                     if (slip === '' || slip === undefined) {
                         console.log(' iwth twillio no slip');
@@ -260,6 +260,8 @@ module.exports = plugin => {
                                     password: crypto.randomFillSync(Buffer.alloc(20)).toString('hex'),
                                     username: phoneNumber,
                                     confirmed: true,
+                                    name:name,
+                                    complete:true
                                 };
 
                                 const user = await getService('user').add(newUser);
