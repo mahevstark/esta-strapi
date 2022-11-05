@@ -11,26 +11,27 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
 
 
     async createme(ctx) {
-        const { id } = ctx.state.user;
+        const { id, username } = ctx.state.user;
+
+        
+
+        const { address_id, products, payment_method, scheduled, scheduled_for, notes,area:areaId } = ctx.request.body;
 
         const area = await strapi.db.query('api::area.area').findOne({
             where: {
-                user: id,
-                charges:{
+                id: areaId,
+                charge:{
                     available:true
                 }
             },
-            populate:['charges'],
+            populate:['charge'],
         });
-        if(!area || !area.charges || area.charges.length==0){
-            return ctx.badRequest('Please select an area first');
+        if(!area || !area.charge){
+            return ctx.badRequest('We are not serving this area yet');
         }
-
-        console.log('area', area);
 
 
         // data from api
-        const { address_id, products, payment_method, scheduled, scheduled_for, notes } = ctx.request.body;
 
         let product_ids = []
         products.map((product)=>{
@@ -54,9 +55,14 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
         
         
         // make sure products exists and are available
-        let products_real = await strapi.query('api::product.product').findMany({id_in:product_ids, published:true, available:true});
+        let products_real = await strapi.db.query('api::product.product').findMany({
+            where: {
+                id:product_ids,
+                available:true
+            }
+        });
         const count_total_orders = await strapi.query('api::order.order').count();
-        const to_charge = area.charges[0];
+        const to_charge = area.charge;
         let total_price = 0;
         let taxp = to_charge.tax;
         let tax = 0;
@@ -70,29 +76,33 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
 
         // add discount
         products_real.map(async (product,index)=>{
-            let base_price = product.sale_price;
-            let pdiscount = 0;
-            if(product.discount_type==='percent') {
-                pdiscount = (product.discount/100)*base_price;
-            }else if(product.discount_type==='flat') {
-                pdiscount = product.discount;
-            }
-            discount += pdiscount;
-            let price = base_price - pdiscount;
-            products_real[index].pdiscount = pdiscount;
-            products_real[index].total_price = price;
-            const qty = products.find((p)=>p.id===product.id).qty;
-            products_real[index].qty = qty;
-            let ptotal = price * qty;
+            const oprod = products.find((p)=>p.id===product.id)
+            if(oprod){
             
+                let base_price = product.sale_price;
+                let pdiscount = 0;
+                if(product.discount_type==='percent') {
+                    pdiscount = (product.discount/100)*base_price;
+                }else if(product.discount_type==='flat') {
+                    pdiscount = product.discount;
+                }
+                discount += pdiscount;
+                let price = base_price - pdiscount;
+                products_real[index].pdiscount = pdiscount;
+                products_real[index].total_price = price;
+                const qty = oprod?.qty || 99;
+                products_real[index].qty = qty;
+                let ptotal = price * qty;
+                
 
-            // add tax to ptotal
-            tax += (taxp/100)*ptotal;
-            total_price += ptotal;
-            console.log('ptotal',price);
+                // add tax to ptotal
+                tax += (taxp/100)*ptotal;
+                total_price += ptotal;
+            }
         });
 
-        const total_total = (total_price + tax + service_fee + delivery_charges) - discount;
+        const total_total = Math.ceil((total_price + tax + service_fee + delivery_charges) - discount);
+        total_price = Math.ceil(total_price);
 
         let order_data = {
             users_permissions_user: id,
@@ -110,6 +120,7 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
             scheduled_for,
             notes,
             area:area.id,
+            phone_number:username
         }
         
 
@@ -117,21 +128,23 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
         const orderId = order.id;
 
         products_real.map(async (product)=>{
-            
-            
-            let price = product.total_price;
-            
-            const pdata = {
-                order:orderId,
-                product:product.id,
-                price:price,
-                qty: product.qty || 1,
-                total:price * (product.qty),
-                discount:product.pdiscount || 0,
-                notes:products.find((p)=>p.id===product.id).notes
-            }
 
-            await strapi.service('api::order-product.order-product').create({data:pdata});
+            const oprod = products.find((p)=>p.id===product.id)
+            if(oprod){
+            
+                let price = product.total_price;
+                
+                const pdata = {
+                    order:orderId,
+                    product:product.id,
+                    price:price,
+                    qty: product.qty || 1,
+                    total:Math.ceil(price * (product.qty)),
+                    discount:product.pdiscount || 0,
+                    notes:oprod?.notes
+                }
+                await strapi.service('api::order-product.order-product').create({data:pdata});
+            }
         });
 
         return order;

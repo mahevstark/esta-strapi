@@ -6,7 +6,7 @@
 -- Generation Time: Oct 20, 2022 at 04:57 PM
 -- Server version: 8.0.27
 -- PHP Version: 7.4.32
-
+set sql_require_primary_key = off;
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
