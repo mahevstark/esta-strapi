@@ -185,6 +185,26 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
         return {orders:orders[0],total:orders[1],more_avalaible};
     },
 
+    async singleminenew(ctx) {
+        const { id,username } = ctx.state.user;
+        const {id:orderId} = ctx.request.body  || {id:0};
+
+        console.log('id',orderId);
+        const order = await strapi.db.query('api::order.order').findOne({
+            where:{
+                id:orderId,
+                users_permissions_user: id
+            },
+            populate:['order_products','order_products.product'],
+        });
+
+        if( !order ){
+            return ctx.badRequest('Order not found');
+        }
+
+        return {order};
+    },
+
     async cancelorder(ctx) {
         const { id } = ctx.state.user;
         const {order_id} = ctx.request.body;

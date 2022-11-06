@@ -13,6 +13,11 @@ module.exports = {
         },
         { 
             method: 'POST',
+            path: '/orders/singleminenew',
+            handler: 'order.singleminenew',
+        },
+        { 
+            method: 'POST',
             path: '/orders/cancel',
             handler: 'order.cancelorder',
         }
