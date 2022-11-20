@@ -12,5 +12,26 @@ module.exports = ({ env }) => ({
             },
         },
     },
+
+    io: {
+        enabled: true,
+        config: {
+            IOServerOptions :{
+                cors: { origin: "*", "methods": "GET,HEAD,PUT,PATCH,POST" },
+            },
+            contentTypes: {
+                "order":["update"]
+            },
+            events:[
+                {
+                    name: "connection",
+                    handler: ({ strapi }, socket) => {
+                        console.log("New connection" + socket.id);
+                        strapi.log.info(`[io] new connection with id ${socket.id}`);
+                    },
+                },
+            ]
+        },
+    },
     // ...
 });

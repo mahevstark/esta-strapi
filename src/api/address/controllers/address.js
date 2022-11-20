@@ -13,14 +13,41 @@ module.exports = createCoreController('api::address.address', ({strapi}) => ({
         const { id } = ctx.state.user;
 
         const { house, block, near, rtl, is_default } = ctx.request.body;
+        // make all other addresses not default
+        // find all addresses of this user
+        let addresses = await strapi.db.query('api::address.address').findMany({
+            where: {
+                users_permissions_user: id
+            }
+        });
+        if(addresses && addresses.length > 0) {
+            let list = [];
+            addresses.map(async (address)=>{
+                if(address.default){
+                    list.push(address.id);
+                }
+            });
 
+            if(list.length > 0){
+                const x = await strapi.db.query('api::address.address').updateMany({
+                    where: {
+                        id: {
+                            $in: list
+                        }
+                    },
+                    data: {
+                        default: false
+                    }
+                });
+            }
+        }
         const address = await strapi.service('api::address.address').create({data:{
             house,
             block,
             near,
             rtl,
             users_permissions_user: id,
-            default: is_default
+            default: true
         }});
         return address;
     },
