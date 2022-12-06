@@ -169,6 +169,13 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
         }else if(type=='cancelled'){
             statuses = ['cancelled_by_user', 'cancelled_by_store' ];
         }
+        else if(type=='past'){
+            statuses = [
+                'delivered',
+                'cancelled_by_user',
+                'cancelled_by_store'
+            ];
+        }
 
         const limit = 20;
 
@@ -193,9 +200,9 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
         const order = await strapi.db.query('api::order.order').findOne({
             where:{
                 id:orderId,
-                users_permissions_user: id
+                // users_permissions_user: id
             },
-            populate:['order_products','order_products.product'],
+            populate:['order_products','order_products.product','area','area.charge'],
         });
 
         if( !order ){

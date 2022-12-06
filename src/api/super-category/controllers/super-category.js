@@ -47,15 +47,28 @@ module.exports = createCoreController('api::super-category.super-category',({str
 
         let data = await strapi.query('api::super-category.super-category').findMany(
             {
-                where:{...ctx.query, },
+                where:{...ctx.query,$not:{
+                    published_at:null
+                }},
                 select: ['id', 'title','subtitle','available','not_available_reason','uid'],
                 populate: {
                     image:true,
                     categories:{
+                        where:{
+                            $not:{
+                                published_at:null
+                            }
+                        },
                         select: ['id', 'title','subtitle','uid'],
                         populate:{
                             image:true,
+                            where:{
+                                $not:{
+                                    published_at:null
+                                }
+                            },
                             sub_categories:{
+                                publicationState: 'live',
                                 select: ['id', 'title','uid'],
                                 populate:{
                                     image:true

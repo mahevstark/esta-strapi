@@ -103,6 +103,36 @@
       "relation": "oneToOne",
       "target": "api::complain-comment.complain-comment",
       "inversedBy": "users_permissions_user"
+    },
+    "is_deleted": {
+      "type": "boolean",
+      "default": false,
+      "private": true,
+      "required": false
+    },
+    "deleted_at": {
+      "type": "datetime"
+    },
+    "wallet": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::wallet.wallet",
+      "inversedBy": "users_permissions_user"
+    },
+    "balance": {
+      "type": "biginteger",
+      "default": "0"
+    },
+    "email_verified": {
+      "type": "boolean",
+      "default": false
+    },
+    "email_token": {
+      "type": "text"
+    },
+    "phone_confirmed": {
+      "type": "boolean",
+      "default": false
     }
   }
 }

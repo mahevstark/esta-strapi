@@ -8,6 +8,7 @@
 
 /* eslint-disable no-useless-escape */
 const crypto = require('crypto');
+const axios = require('axios');
 const _ = require('lodash');
 const utils = require('@strapi/utils');
 const { getService } = require('@strapi/plugin-users-permissions/server/utils');
@@ -24,7 +25,6 @@ const client = require('twilio')(accountSid, authToken);
 
 const { getAbsoluteAdminUrl, getAbsoluteServerUrl, sanitize, NotFoundError } = utils;
 const { ApplicationError, ValidationError } = utils.errors;
-
 const sanitizeUser = (user, ctx) => {
     const { auth } = ctx.state;
     const userSchema = strapi.getModel('plugin::users-permissions.user');
@@ -59,9 +59,74 @@ module.exports = plugin => {
         },
     });
 
+    alone['content-api'].routes.push({
+        method: 'DELETE',
+        path: '/users/me',
+        handler: 'user.deleteme',
+        config: {
+            prefix: '',
+        },
+    });
+
+
+    alone['content-api'].routes.push({
+        method: 'GET',
+        path: '/users/verify-email',
+        handler: 'user.verifyemail',
+        config: {
+            prefix: '',
+        },
+    });
+
 
 
     plugin.routes = alone;
+
+    plugin.controllers.user.verifyemail = async (ctx) => {
+        console.log('bitch')
+
+        const {locale} = ctx.params;
+        const isUrdu = locale === 'ur-PK';
+
+        console.log("verifyemail", ctx.request);
+
+        ctx.send({lol:"fuck"})
+    },
+
+    plugin.controllers.user.deleteme = async (ctx) => {
+
+        const {locale} = ctx.params;
+        const isUrdu = locale === 'ur-PK';
+
+        const advancedConfigs = await strapi
+            .store({ type: 'plugin', name: 'users-permissions', key: 'advanced' })
+            .get();
+
+        const { id } = ctx.state.user;
+        const { password } = ctx.request.body;
+
+        const user = await getService('user').fetch(id);
+        if (!user) {
+            throw new NotFoundError(`User not found`);
+        }
+
+        await validateUpdateUserBody(ctx.request.body);
+
+        if (user.provider === 'local' && _.has(ctx.request.body, 'password') && !password) {
+            throw new ValidationError('password.notNull');
+        }
+
+        const updateData = {
+            is_deleted:true,
+            deleted_at: new Date()
+        };
+
+        const data = await getService('user').edit(user.id, updateData);
+
+        // logout user
+        const sanitizedData = await sanitizeOutput(data, ctx);
+        ctx.send(sanitizedData);
+    },
 
 
     plugin.controllers.user.updateme3 = async (ctx) => {
@@ -73,8 +138,10 @@ module.exports = plugin => {
             .store({ type: 'plugin', name: 'users-permissions', key: 'advanced' })
             .get();
 
-        const { id } = ctx.state.user;
-        const { email, username, password } = ctx.request.body;
+        const { id,email:oldEmail } = ctx.state.user;
+        const { email:e, username, password } = ctx.request.body;
+        const email = e!==undefined?e:oldEmail;
+
 
         const user = await getService('user').fetch(id);
         if (!user) {
@@ -108,11 +175,65 @@ module.exports = plugin => {
             ctx.request.body.email = ctx.request.body.email.toLowerCase();
         }
 
-        const updateData = {
+        const randomToken = Math.random().toString(36).slice(-10);
+        let updateData = {
             ...ctx.request.body,
         };
+        let data;
+        const url = process.env.URL;
+        if(oldEmail!=email && email!=null){
+            const confirmURL = `${url}api/auth/send-email-confirmation`;
+            console.log("confirmURL", confirmURL);
+            const confirmBody = {
+                email: email,
+            };
+            console.log("confirmBody", confirmBody);
+            updateData = {
+                ...updateData,
+                email_verified: false,
+                confirmed: false
+            };
+            data = await getService('user').edit(user.id, updateData);
+            
+            // send confirmBody as post to confirmURL
+            try{
+                const confirmResponse = await axios.post(confirmURL, confirmBody, );
+                console.log("confirmResponse", confirmResponse);
+            } catch(err) {
+                throw new ApplicationError(err);
+            }
 
-        const data = await getService('user').edit(user.id, updateData);
+
+            
+
+
+
+
+            
+            // try{
+            //     await strapi.plugins['email'].services.email.send({
+            //         to: email,
+            //         from: 'estamart42@gmail.com', // e.g. single sender verification in SendGrid
+            //         replyTo: 'estamart42@gmail.com',
+            //         subject: 'Verify your email address',
+            //         text: '${fieldName}', // Replace with a valid field ID
+            //         html: `Please verify your email address using this link: ${url}/api/users/verify-email?code=${randomToken}`, 
+            //     })
+
+            //     updateData = {
+            //         ...updateData,
+            //         email_verified: false,
+            //         email_token: randomToken,
+            //     };
+            // } catch(err) {
+            //     console.log(err);
+            //     throw new ApplicationError('Email could not be sent');
+            // }
+        }else{
+            data = await getService('user').edit(user.id, updateData);
+        }
+
+        
         const sanitizedData = await sanitizeOutput(data, ctx);
 
         ctx.send(sanitizedData);
@@ -233,6 +354,7 @@ module.exports = plugin => {
                             });
 
                             const blocked = !isUrdu ? 'Your account has been blocked by an administrator': 'آپ کا اکاؤنٹ ایڈمنسٹریٹر کی طرف سے بلاک کر دیا گیا ہے';
+                            const deleted = !isUrdu ? 'Your account has been deleted': 'آپ کا اکاؤنٹ حذف کر دیا گیا ہے';
 
                             if (!user) {
 
@@ -259,7 +381,7 @@ module.exports = plugin => {
                                     provider: 'twillio',
                                     password: crypto.randomFillSync(Buffer.alloc(20)).toString('hex'),
                                     username: phoneNumber,
-                                    confirmed: true,
+                                    phone_confirmed: true,
                                     name:name,
                                     complete:true
                                 };
@@ -283,6 +405,9 @@ module.exports = plugin => {
 
                                 if (user.blocked === true) {
                                     throw new ApplicationError(blocked);
+                                }
+                                if (user.is_deleted === true) {
+                                    throw new ApplicationError(deleted);
                                 }
 
                                 return ctx.send({

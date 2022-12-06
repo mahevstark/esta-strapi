@@ -33,5 +33,18 @@ module.exports = ({ env }) => ({
             ]
         },
     },
+
+    email: {
+        config: {
+            provider: 'sendgrid',
+            providerOptions: {
+                apiKey: "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",
+            },
+            settings: {
+                defaultFrom: 'estamart42@gmail.com',
+                defaultReplyTo: 'estamart42@gmail.com',
+            },
+        },
+    },
     // ...
 });
