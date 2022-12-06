@@ -9,8 +9,8 @@ const { createCoreController } = require('@strapi/strapi').factories;
 const sanitizeImage = (d) => {
     const i = {
         turl:d.image?.formats?.thumbnail?.url,
-        th:d.image.formats?.thumbnail?.height,
-        tw:d.image.formats?.thumbnail?.width,
+        th:d.image?.formats?.thumbnail?.height,
+        tw:d.image?.formats?.thumbnail?.width,
         url:d.image?.url,
         h:d.image?.height,
         w:d.image?.width,
