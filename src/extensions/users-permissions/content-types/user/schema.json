@@ -113,12 +113,6 @@
     "deleted_at": {
       "type": "datetime"
     },
-    "wallet": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::wallet.wallet",
-      "inversedBy": "users_permissions_user"
-    },
     "balance": {
       "type": "biginteger",
       "default": "0"
@@ -133,6 +127,12 @@
     "phone_confirmed": {
       "type": "boolean",
       "default": false
+    },
+    "wallets": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::wallet.wallet",
+      "mappedBy": "users_permissions_user"
     }
   }
 }

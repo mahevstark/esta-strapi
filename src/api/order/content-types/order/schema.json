@@ -125,11 +125,11 @@
       "target": "api::order-complain.order-complain",
       "inversedBy": "order"
     },
-    "wallet": {
+    "wallets": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "manyToMany",
       "target": "api::wallet.wallet",
-      "inversedBy": "order"
+      "mappedBy": "orders"
     }
   }
 }

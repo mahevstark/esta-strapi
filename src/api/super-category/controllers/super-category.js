@@ -84,9 +84,10 @@ module.exports = createCoreController('api::super-category.super-category',({str
 
         data = data.map((d)=>{
             d.categories = d.categories.map((c)=>{
-                console.log(c.image.formats);
+                
                 c.image = sanitizeImage(c);
                 c.sub_categories = c.sub_categories.map((s)=>{
+                    console.log('withotu image:', s.title)
                     s.image = sanitizeImage(s);
                     return s;
                 })

@@ -4,7 +4,8 @@
   "info": {
     "singularName": "wallet",
     "pluralName": "wallets",
-    "displayName": "wallet"
+    "displayName": "wallet",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
@@ -13,9 +14,9 @@
   "attributes": {
     "users_permissions_user": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "manyToOne",
       "target": "plugin::users-permissions.user",
-      "mappedBy": "wallet"
+      "inversedBy": "wallets"
     },
     "before": {
       "type": "integer",
@@ -30,11 +31,11 @@
     "reason": {
       "type": "text"
     },
-    "order": {
+    "orders": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "manyToMany",
       "target": "api::order.order",
-      "inversedBy": "wallet"
+      "inversedBy": "wallets"
     }
   }
 }
