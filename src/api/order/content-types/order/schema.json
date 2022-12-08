@@ -130,6 +130,12 @@
       "relation": "manyToMany",
       "target": "api::wallet.wallet",
       "mappedBy": "orders"
+    },
+    "transactions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::transaction.transaction",
+      "mappedBy": "order"
     }
   }
 }

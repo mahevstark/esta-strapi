@@ -133,6 +133,12 @@
       "relation": "oneToMany",
       "target": "api::wallet.wallet",
       "mappedBy": "users_permissions_user"
+    },
+    "transactions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::transaction.transaction",
+      "mappedBy": "users_permissions_user"
     }
   }
 }
