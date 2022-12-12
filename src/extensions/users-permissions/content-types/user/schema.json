@@ -139,6 +139,12 @@
       "relation": "oneToMany",
       "target": "api::transaction.transaction",
       "mappedBy": "users_permissions_user"
+    },
+    "push_token_android": {
+      "type": "string"
+    },
+    "push_token_ios": {
+      "type": "string"
     }
   }
 }

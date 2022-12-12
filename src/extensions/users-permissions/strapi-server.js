@@ -78,6 +78,14 @@ module.exports = plugin => {
         },
     });
 
+    alone['content-api'].routes.push({
+        method: 'POST',
+        path: '/users/store-push-token',
+        handler: 'user.storePushToken',
+        config: {
+            prefix: '',
+        },
+    });
 
 
     plugin.routes = alone;
@@ -126,6 +134,30 @@ module.exports = plugin => {
         // logout user
         const sanitizedData = await sanitizeOutput(data, ctx);
         ctx.send(sanitizedData);
+    },
+
+    plugin.controllers.user.storePushToken = async (ctx) => {
+
+        const { id, push_token_android:o_android, push_token_ios: o_ios } = ctx.state.user;
+        const { token, platform } = ctx.request.body;
+
+        const user = await getService('user').fetch(id);
+        if (!user) {
+            throw new NotFoundError(`User not found`);
+        }
+
+        await validateUpdateUserBody(ctx.request.body);
+
+        if (user.provider === 'local' && _.has(ctx.request.body, 'password') && !password) {
+            throw new ValidationError('password.notNull');
+        }
+
+        const updateData = {
+            push_token_android: platform=='android'?token:o_android,
+            push_token_ios: platform=='ios'?token:o_ios,
+        };
+        await getService('user').edit(user.id, updateData);
+        ctx.send({success:true});
     },
 
 
