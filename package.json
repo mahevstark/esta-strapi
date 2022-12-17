@@ -21,6 +21,7 @@
     "add": "^2.0.6",
     "axios": "^1.2.1",
     "better-sqlite3": "7.4.6",
+    "expo-server-sdk": "^3.7.0",
     "md5": "^2.3.0",
     "mysql": "^2.18.1",
     "strapi-plugin-io": "^1.1.2",
