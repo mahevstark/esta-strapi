@@ -5,7 +5,6 @@
  */
 
 const { createCoreController } = require('@strapi/strapi').factories;
-const { sendPush } = require('./../../../../config/functions/sendpush');
 module.exports = createCoreController('api::order.order',({strapi})=>({
 
 
@@ -127,14 +126,7 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
         const order = await strapi.service('api::order.order').create({data:order_data});
         const orderId = order.id;
 
-        sendPush(
-            [push_token_android,push_token_ios],
-            `👍 We have just received your order, we picking and packing it carefully for you!`,
-            {
-                type:"NEW_ORDER",
-                orderId
-            }
-        );
+        
 
         products_real.map(async (product)=>{
 

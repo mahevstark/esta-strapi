@@ -145,6 +145,12 @@
     },
     "push_token_ios": {
       "type": "string"
+    },
+    "slips": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::slip.slip",
+      "mappedBy": "users_permissions_user"
     }
   }
 }
