@@ -26,6 +26,7 @@
     "mysql": "^2.18.1",
     "strapi-plugin-io": "^1.1.2",
     "twilio": "^3.82.0",
+    "uuid": "^9.0.0",
     "yarn": "^1.22.19"
   },
   "author": {

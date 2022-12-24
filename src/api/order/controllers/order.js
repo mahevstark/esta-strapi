@@ -5,16 +5,18 @@
  */
 
 const { createCoreController } = require('@strapi/strapi').factories;
+const { getService } = require('@strapi/plugin-users-permissions/server/utils');
+
 module.exports = createCoreController('api::order.order',({strapi})=>({
 
 
 
     async createme(ctx) {
-        const { id, username, push_token_android, push_token_ios } = ctx.state.user;
+        const { id, username, push_token_android, push_token_ios, balance } = ctx.state.user;
 
         
 
-        const { address_id, products, payment_method, scheduled, scheduled_for, notes,area:areaId } = ctx.request.body;
+        const { address_id, products, payment_method, scheduled, scheduled_for, notes,area:areaId, slip:s_slip, use_wallet:used_wallet, use_wallet_balance:used_wallet_balance } = ctx.request.body;
 
         const area = await strapi.db.query('api::area.area').findOne({
             where: {
@@ -103,6 +105,27 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
         const total_total = Math.ceil((total_price + tax + service_fee + delivery_charges) - discount);
         total_price = Math.ceil(total_price);
 
+        // get the proof of payment if done by card
+        let slip = {id:0};
+        if(payment_method=='card'){
+            console.log('s_slip',s_slip);
+            slip = await strapi.db.query('api::slip.slip').findMany({where:{slip:s_slip}, groupBy:['id']});
+            slip = slip[0];
+        }
+
+        
+        // if user is paying some amount or all amount from wallet, check if wallet has balance
+        if(used_wallet){
+            if(balance < used_wallet_balance){
+                return ctx.badRequest('Insufficient balance');
+            }
+        }
+
+        if(used_wallet_balance<0){
+            return ctx.badRequest('Invalid amount');
+        }
+
+        // main order object
         let order_data = {
             users_permissions_user: id,
             bill:total_price,
@@ -119,13 +142,35 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
             scheduled_for,
             notes,
             area:area.id,
-            phone_number:username
+            phone_number:username,
+            used_wallet,
+            used_wallet_balance
         }
+
         
 
         const order = await strapi.service('api::order.order').create({data:order_data});
         const orderId = order.id;
 
+        // update slip for order relation with orderId
+        if(payment_method=='card'){
+            await strapi.entityService.update('api::slip.slip', slip.id, {data:{order:orderId}});
+        }
+
+        
+        if(used_wallet){
+            
+            const walletEntry = {
+                before:balance,
+                after:(balance-used_wallet_balance),
+                reason:"Order amount deduction for #"+order_uid,
+                users_permissions_user: id
+            }
+            await strapi.db.query('api::wallet.wallet').create({data:walletEntry});
+            await getService('user').edit(id, {balance:(balance-used_wallet_balance)});
+
+
+        }
         
 
         products_real.map(async (product)=>{
@@ -178,19 +223,21 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
             ];
         }
 
-        const limit = 20;
-
+        const limit = 10;
+        const start = (page-1)*limit;
+        
         const orders = await strapi.db.query('api::order.order').findWithCount({
             where:type=='scheduled'?{users_permissions_user: id, scheduled:true, status:'processing'}:{users_permissions_user: id, status :{
                 $contains: statuses
             }},
-            populate:['order_products','order_products.product'],
+            populate:['order_products','order_products.product', 'slips'],
             limit,
-            start: (page-1)*limit,
+            offset: start,
+            orderBy: {id:'desc'}
         });
 
-        const more_avalaible = (orders[1] > ((page-1)*limit))
-        return {orders:orders[0],total:orders[1],more_avalaible};
+        const more_avalaible = (orders[1] > ((page)*limit))
+        return {orders:orders[0],total:orders[1],more_avalaible, start};
     },
 
     async singleminenew(ctx) {
@@ -203,7 +250,7 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
                 id:orderId,
                 // users_permissions_user: id
             },
-            populate:['order_products','order_products.product','area','area.charge'],
+            populate:['order_products','order_products.product','area','area.charge', 'slips'],
         });
 
         if( !order ){

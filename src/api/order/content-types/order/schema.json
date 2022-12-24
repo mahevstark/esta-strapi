@@ -136,6 +136,20 @@
       "relation": "oneToMany",
       "target": "api::transaction.transaction",
       "mappedBy": "order"
+    },
+    "slips": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::slip.slip",
+      "mappedBy": "order"
+    },
+    "used_wallet": {
+      "type": "boolean",
+      "default": false
+    },
+    "used_wallet_balance": {
+      "type": "integer",
+      "min": 0
     }
   }
 }

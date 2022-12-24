@@ -43,6 +43,12 @@
     },
     "amount_paid": {
       "type": "integer"
+    },
+    "order": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::order.order",
+      "inversedBy": "slips"
     }
   }
 }
