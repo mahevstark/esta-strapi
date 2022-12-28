@@ -175,6 +175,12 @@
       },
       "type": "string",
       "default": "#ffcc66"
+    },
+    "suggestion": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::suggestion.suggestion",
+      "inversedBy": "products"
     }
   }
 }

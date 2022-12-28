@@ -151,6 +151,12 @@
       "relation": "oneToMany",
       "target": "api::slip.slip",
       "mappedBy": "users_permissions_user"
+    },
+    "boy": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::boy.boy",
+      "inversedBy": "users_permissions_user"
     }
   }
 }

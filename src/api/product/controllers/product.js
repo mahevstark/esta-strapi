@@ -68,4 +68,54 @@ module.exports = createCoreController('api::product.product', ({strapi})=>({
 
         return {data, meta};
     },
+
+    async searchsuggest(ctx) {
+
+        const { search:s } = ctx.query;
+        const search = s.toLowerCase();
+
+        if(search==''){
+            return ctx.badRequest('Nothing to search');
+        }
+
+        // it is case insensitive
+        const products = await strapi.db.query('api::product.product').findMany({
+            where:{
+                $or:[
+                    {
+                        title: {
+                            $contains:search
+                        },
+                    },
+                    {
+                        subtitle: {
+                            $contains:search
+                        },
+                    },
+                    {
+                        tags: {
+                            $contains:search
+                        },
+                    },
+                ]
+            },
+            populate:['image'],
+            limit:10,
+            groupBy:['id'],
+        });
+
+        let results = [];
+        products.map((p)=>{
+            results.push({
+                id:p.id,
+                title:p.title,
+                subtitle:p.subtitle,
+                image:p.image?.formats?.thumbnail?.url,
+                type:'product',
+                price:p.sale_price,
+            })
+        });
+
+        return {data:results};
+    },
 }) );

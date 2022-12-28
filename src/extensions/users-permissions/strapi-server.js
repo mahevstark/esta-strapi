@@ -299,7 +299,7 @@ module.exports = plugin => {
 
                     console.log(' iwth twillio');
 
-                    const { phoneNumber, slip, code, channel, name } = params ?? { slip: '', phoneNumber: '', code: '', channel:'sms', name:'Esta user' };
+                    const { phoneNumber, slip, code, channel, name, driver } = params ?? { slip: '', phoneNumber: '', code: '', channel:'sms', name:'Esta user', driver:false };
 
                     if (slip === '' || slip === undefined) {
                         console.log(' iwth twillio no slip');
@@ -338,6 +338,7 @@ module.exports = plugin => {
                                 slip: servicId,
                                 sid: servicId,
                                 timpestamp: Date.now(),
+                                driver
                             }
                         });
 
@@ -359,6 +360,10 @@ module.exports = plugin => {
                         if (tempPhone === null) {
                             throw new ApplicationError('Invalid slip');
                         }
+
+                        if(tempPhone.driver!=driver){
+                            throw new ApplicationError('Invalid slip');
+                        }
                         console.log('step 3')
 
                         let tPhone = tempPhone.phoneNumber;
@@ -375,13 +380,14 @@ module.exports = plugin => {
 
                         if (verification.status === 'approved') {
 
-
+                            
 
                             // Check if the user exists.
                             const user = await strapi.query('plugin::users-permissions.user').findOne({
                                 where: {
                                     provider: 'twillio',
                                     phoneNumber: tempPhone.phoneNumber,
+                                    
                                 },
                             });
 
@@ -389,6 +395,12 @@ module.exports = plugin => {
                             const deleted = !isUrdu ? 'Your account has been deleted': 'آپ کا اکاؤنٹ حذف کر دیا گیا ہے';
 
                             if (!user) {
+
+                                if(driver){
+
+                                    // throw invalid account
+                                    throw new ApplicationError('Invalid account');
+                                }
 
                                 const pluginStore = await strapi.store({ type: 'plugin', name: 'users-permissions' });
                                 const settings = await pluginStore.get({ key: 'advanced' });
@@ -441,6 +453,7 @@ module.exports = plugin => {
                                 if (user.is_deleted === true) {
                                     throw new ApplicationError(deleted);
                                 }
+                                
 
                                 return ctx.send({
                                     jwt: getService('jwt').issue({ id: user.id }),
@@ -448,7 +461,6 @@ module.exports = plugin => {
                                 });
                             }
                         } else {
-
                             throw new ApplicationError(!isUrdu?'Invalid code':'غلط کوڈ');
                         }
 
