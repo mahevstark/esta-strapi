@@ -47,9 +47,9 @@
     },
     "unit": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "manyToOne",
       "target": "api::unit.unit",
-      "inversedBy": "product"
+      "inversedBy": "products"
     },
     "attributes": {
       "type": "relation",
