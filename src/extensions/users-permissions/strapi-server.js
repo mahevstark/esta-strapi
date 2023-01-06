@@ -363,12 +363,12 @@ module.exports = plugin => {
                             throw new ApplicationError('Invalid slip');
                         }
 
-                        if(tempPhone.driver!=driver){
-                            throw new ApplicationError('Invalid slip');
-                        }
-                        if(tempPhone.sales!=sales){
-                            throw new ApplicationError('Invalid slip');
-                        }
+                        // if(tempPhone.driver!=driver){
+                        //     throw new ApplicationError('Invalid slip');
+                        // }
+                        // if(tempPhone.sales!=sales){
+                        //     throw new ApplicationError('Invalid slip');
+                        // }
                         console.log('step 3')
 
                         let tPhone = tempPhone.phoneNumber;
