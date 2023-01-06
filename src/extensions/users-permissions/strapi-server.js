@@ -391,9 +391,7 @@ module.exports = plugin => {
                             const user = await strapi.query('plugin::users-permissions.user').findOne({
                                 where: {
                                     provider: 'twillio',
-                                    phoneNumber: tempPhone.phoneNumber,
-                                    sales:sales,
-                                    driver:driver,
+                                    phoneNumber: tempPhone.phoneNumber
                                 },
                             });
 
