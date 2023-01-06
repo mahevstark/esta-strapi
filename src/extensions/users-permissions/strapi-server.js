@@ -299,7 +299,8 @@ module.exports = plugin => {
 
                     console.log(' iwth twillio');
 
-                    const { phoneNumber, slip, code, channel, name, driver } = params ?? { slip: '', phoneNumber: '', code: '', channel:'sms', name:'Esta user', driver:false };
+                    const { phoneNumber, slip, code, channel, name, driver, sales } = params ?? { slip: '', phoneNumber: '', code: '', channel:'sms', name:'Esta user', driver:false, sales:false };
+                    
 
                     if (slip === '' || slip === undefined) {
                         console.log(' iwth twillio no slip');
@@ -338,7 +339,8 @@ module.exports = plugin => {
                                 slip: servicId,
                                 sid: servicId,
                                 timpestamp: Date.now(),
-                                driver
+                                driver,
+                                sales,
                             }
                         });
 
@@ -364,6 +366,9 @@ module.exports = plugin => {
                         if(tempPhone.driver!=driver){
                             throw new ApplicationError('Invalid slip');
                         }
+                        if(tempPhone.sales!=sales){
+                            throw new ApplicationError('Invalid slip');
+                        }
                         console.log('step 3')
 
                         let tPhone = tempPhone.phoneNumber;
@@ -387,7 +392,8 @@ module.exports = plugin => {
                                 where: {
                                     provider: 'twillio',
                                     phoneNumber: tempPhone.phoneNumber,
-                                    
+                                    sales:sales,
+                                    driver:driver,
                                 },
                             });
 
@@ -396,7 +402,7 @@ module.exports = plugin => {
 
                             if (!user) {
 
-                                if(driver){
+                                if(driver || sales){
 
                                     // throw invalid account
                                     throw new ApplicationError('Invalid account');

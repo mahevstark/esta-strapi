@@ -27,6 +27,10 @@
     "driver": {
       "type": "boolean",
       "default": false
+    },
+    "sales": {
+      "type": "boolean",
+      "default": false
     }
   }
 }

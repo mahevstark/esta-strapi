@@ -157,6 +157,14 @@
       "relation": "oneToOne",
       "target": "api::boy.boy",
       "inversedBy": "users_permissions_user"
+    },
+    "driver": {
+      "type": "boolean",
+      "default": false
+    },
+    "sales": {
+      "type": "boolean",
+      "default": false
     }
   }
 }
