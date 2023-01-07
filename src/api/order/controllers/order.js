@@ -14,8 +14,6 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
     async createme(ctx) {
         const { id, username, push_token_android, push_token_ios, balance } = ctx.state.user;
 
-        
-
         const { address_id, products, payment_method, scheduled, scheduled_for, notes,area:areaId, slip:s_slip, use_wallet:used_wallet, use_wallet_balance:used_wallet_balance } = ctx.request.body;
 
         const area = await strapi.db.query('api::area.area').findOne({
@@ -251,6 +249,26 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
                 // users_permissions_user: id
             },
             populate:['order_products','order_products.product','area','area.charge', 'slips'],
+        });
+
+        if( !order ){
+            return ctx.badRequest('Order not found');
+        }
+
+        return {order};
+    },
+
+    async findOne(ctx) {
+
+        let {data, meta} = await super.findOne(ctx);
+
+
+        const order = await strapi.db.query('api::order.order').findOne({
+            where:{
+                id:data.id,
+                // users_permissions_user: id
+            },
+            populate:['order_products','order_products.product','area','area.charge', 'slips', 'users_permissions_user'],
         });
 
         if( !order ){
