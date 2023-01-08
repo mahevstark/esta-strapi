@@ -14,7 +14,23 @@ module.exports = createCoreController('api::product.product', ({strapi})=>({
         let {data, meta} = await super.find(ctx);
 
         data = data.map((d)=>{
+
             let a = d;
+
+            let discountedVal = 0;
+            let discounted = a.attributes.discount_type!="none";
+
+            if(discounted){
+
+                if(a.attributes.discount_type=="percent"){
+                    discountedVal = (a.attributes.sale_price * a.attributes.discount)/100;
+                }else{
+                    discountedVal = a.attributes.discount;
+                }
+            }
+
+            const sale_price = parseInt(a.attributes.sale_price - discountedVal);
+
             const i = {
                 turl:d.attributes.image.data.attributes.formats.thumbnail.url,
                 th:d.attributes.image.data.attributes.formats.thumbnail.height,
@@ -30,9 +46,10 @@ module.exports = createCoreController('api::product.product', ({strapi})=>({
                 })
             })
             a.attributes.attributes = as;
-            console.log(d.attributes.attributes)
             a.attributes.unit = d.attributes.unit.data?.attributes?.title || "Uknown";
             a.attributes.image = i;
+            a.attributes.original_price = a.attributes.sale_price;
+            a.attributes.sale_price = sale_price;
             return a;
         })
 
@@ -45,6 +62,22 @@ module.exports = createCoreController('api::product.product', ({strapi})=>({
 
         let a = data;
         let d= a;
+
+
+        let discountedVal = 0;
+        let discounted = a.attributes.discount_type!="none";
+
+        if(discounted){
+
+            if(a.attributes.discount_type=="percent"){
+                discountedVal = (a.attributes.sale_price * a.attributes.discount)/100;
+            }else{
+                discountedVal = a.attributes.discount;
+            }
+        }
+
+        const sale_price = parseInt(a.attributes.sale_price - discountedVal);
+
         const i = {
             turl:d.attributes.image.data.attributes.formats.thumbnail.url,
             th:d.attributes.image.data.attributes.formats.thumbnail.height,
@@ -60,9 +93,10 @@ module.exports = createCoreController('api::product.product', ({strapi})=>({
             })
         })
         a.attributes.attributes = as;
-        console.log(d.attributes.attributes)
         a.attributes.unit = d.attributes.unit.data.attributes.title;
         a.attributes.image = i;
+        a.attributes.original_price = a.attributes.sale_price;
+        a.attributes.sale_price = sale_price;
 
         data = a;
 
@@ -79,7 +113,7 @@ module.exports = createCoreController('api::product.product', ({strapi})=>({
         }
 
         // it is case insensitive
-        const products = await strapi.db.query('api::product.product').findMany({
+        let data = await strapi.db.query('api::product.product').findMany({
             where:{
                 $or:[
                     {
@@ -99,23 +133,65 @@ module.exports = createCoreController('api::product.product', ({strapi})=>({
                     },
                 ]
             },
-            populate:['image'],
-            limit:10,
+            populate:['image','images','unit','attributes'],
+            fields:['id','title','subtitle','available','sale_price','stock','discount_type','discount'],
+            limit:20,
             groupBy:['id'],
         });
 
-        let results = [];
-        products.map((p)=>{
-            results.push({
-                id:p.id,
-                title:p.title,
-                subtitle:p.subtitle,
-                image:p.image?.formats?.thumbnail?.url,
-                type:'product',
-                price:p.sale_price,
-            })
-        });
+        // let results = [];
+        // products.map((p)=>{
+        //     results.push({
+        //         id:p.id,
+        //         title:p.title,
+        //         subtitle:p.subtitle,
+        //         image:p.image?.formats?.thumbnail?.url,
+        //         type:'product',
+        //         price:p.sale_price,
+        //     })
+        // });
 
-        return {data:results};
+
+        data = data.map((d)=>{
+
+
+            let discountedVal = 0;
+            let discounted = a.attributes.discount_type!="none";
+
+            if(discounted){
+
+                if(a.attributes.discount_type=="percent"){
+                    discountedVal = (a.attributes.sale_price * a.attributes.discount)/100;
+                }else{
+                    discountedVal = a.attributes.discount;
+                }
+            }
+
+            const sale_price = parseInt(a.attributes.sale_price - discountedVal);
+
+            let a = d;
+            const i = {
+                turl:d.attributes.image.data.attributes.formats.thumbnail.url,
+                th:d.attributes.image.data.attributes.formats.thumbnail.height,
+                tw:d.attributes.image.data.attributes.formats.thumbnail.width,
+                url:d.attributes.image.data.attributes.url,
+                h:d.attributes.image.data.attributes.height,
+                w:d.attributes.image.data.attributes.width,
+            };
+            let as = [];
+            d.attributes.attributes.data.map((da)=>{
+                as.push({
+                    title:da.attributes.title
+                })
+            })
+            a.attributes.attributes = as;
+            a.attributes.unit = d.attributes.unit.data?.attributes?.title || "Uknown";
+            a.attributes.image = i;
+            a.attributes.original_price = a.attributes.sale_price;
+            a.attributes.sale_price = sale_price;
+            return a;
+        })
+
+        return {data};
     },
 }) );
