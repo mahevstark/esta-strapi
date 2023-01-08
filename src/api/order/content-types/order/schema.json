@@ -150,6 +150,10 @@
     "used_wallet_balance": {
       "type": "integer",
       "min": 0
+    },
+    "taxp": {
+      "type": "decimal",
+      "default": 0
     }
   }
 }

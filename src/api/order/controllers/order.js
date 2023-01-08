@@ -142,7 +142,8 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
             area:area.id,
             phone_number:username,
             used_wallet,
-            used_wallet_balance
+            used_wallet_balance,
+            taxp:area.charge.tax,
         }
 
         
