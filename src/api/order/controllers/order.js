@@ -100,7 +100,7 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
             }
         });
 
-        const total_total = Math.ceil((total_price + tax + service_fee + delivery_charges) - discount);
+        const total_total = Math.ceil((total_price + tax + service_fee + delivery_charges));
         total_price = Math.ceil(total_price);
 
         // get the proof of payment if done by card
@@ -184,7 +184,7 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
                     price:price,
                     qty: product.qty || 1,
                     total:Math.ceil(price * (product.qty)),
-                    discount:product.pdiscount || 0,
+                    discount:Math.ceil(price * (product.pdiscount)) || 0,
                     notes:oprod?.notes
                 }
                 await strapi.service('api::order-product.order-product').create({data:pdata});
