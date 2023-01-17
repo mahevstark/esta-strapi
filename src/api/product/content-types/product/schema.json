@@ -174,7 +174,7 @@
         }
       },
       "type": "string",
-      "default": "#ffcc66"
+      "default": "#ffffff"
     },
     "suggestion": {
       "type": "relation",

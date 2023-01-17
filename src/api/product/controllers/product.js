@@ -3,7 +3,8 @@
 /**
  * product controller
  */
-
+const csv = require('csv-parser');
+        const fs = require('fs');
 const { createCoreController } = require('@strapi/strapi').factories;
 
 module.exports = createCoreController('api::product.product', ({strapi})=>({
@@ -13,9 +14,47 @@ module.exports = createCoreController('api::product.product', ({strapi})=>({
 
         let {data, meta} = await super.find(ctx);
 
-        data = data.map((d)=>{
+        let cats = await strapi.query('api::category.category').findMany({
+            populate: ['sub_categories']
+        });
+
+        // make a map like: [ { cat_id:1, sub_cats:[1,2,3] }, { cat_id:2, sub_cats:[4,5,6] } ]
+
+        let catMap = [];
+        cats.map((cat)=>{
+            let sub_cats = [];
+            cat.sub_categories.map((sub_cat)=>{
+                sub_cats.push(sub_cat.id);
+            })
+            catMap.push({
+                cat_id: cat.id,
+                sub_cats
+            })
+        })
+
+
+
+        data = data.map((d,index)=>{
 
             let a = d;
+
+
+            // if(index==0){
+                
+            // }
+            // if()
+
+            const subCatId = a.attributes.sub_category.data.id;
+            // // find the cat_id from catMap
+            let catId = 0;
+            catMap.map((cat)=>{
+                if(cat.sub_cats.includes(subCatId)){
+                    catId = cat.cat_id;
+                }
+            })
+
+            a.attributes.category = catId;
+            
 
             let discountedVal = 0;
             let discounted = a.attributes.discount_type!="none";
@@ -30,15 +69,17 @@ module.exports = createCoreController('api::product.product', ({strapi})=>({
             }
 
             const sale_price = parseInt(a.attributes.sale_price - discountedVal);
-
-            const i = {
-                turl:d.attributes.image.data.attributes.formats.thumbnail.url,
-                th:d.attributes.image.data.attributes.formats.thumbnail.height,
-                tw:d.attributes.image.data.attributes.formats.thumbnail.width,
-                url:d.attributes.image.data.attributes.url,
-                h:d.attributes.image.data.attributes.height,
-                w:d.attributes.image.data.attributes.width,
-            };
+            let i = {};
+            if(d.attributes.image.data!=null && d.attributes.image.data.attributes.formats!=null){
+                i = {
+                    turl:d.attributes.image.data.attributes.formats.thumbnail.url,
+                    th:d.attributes.image.data.attributes.formats.thumbnail.height,
+                    tw:d.attributes.image.data.attributes.formats.thumbnail.width,
+                    url:d.attributes.image.data.attributes.url,
+                    h:d.attributes.image.data.attributes.height,
+                    w:d.attributes.image.data.attributes.width,
+                };
+            }
             let as = [];
             d.attributes.attributes.data.map((da)=>{
                 as.push({
@@ -63,7 +104,6 @@ module.exports = createCoreController('api::product.product', ({strapi})=>({
         let a = data;
         let d= a;
 
-
         let discountedVal = 0;
         let discounted = a.attributes.discount_type!="none";
 
@@ -77,15 +117,17 @@ module.exports = createCoreController('api::product.product', ({strapi})=>({
         }
 
         const sale_price = parseInt(a.attributes.sale_price - discountedVal);
-
-        const i = {
-            turl:d.attributes.image.data.attributes.formats.thumbnail.url,
-            th:d.attributes.image.data.attributes.formats.thumbnail.height,
-            tw:d.attributes.image.data.attributes.formats.thumbnail.width,
-            url:d.attributes.image.data.attributes.url,
-            h:d.attributes.image.data.attributes.height,
-            w:d.attributes.image.data.attributes.width,
-        };
+        let i = {};
+        if(d.attributes.image.data!=null){
+            i = {
+                turl:d.attributes.image.data.attributes.formats.thumbnail.url,
+                th:d.attributes.image.data.attributes.formats.thumbnail.height,
+                tw:d.attributes.image.data.attributes.formats.thumbnail.width,
+                url:d.attributes.image.data.attributes.url,
+                h:d.attributes.image.data.attributes.height,
+                w:d.attributes.image.data.attributes.width,
+            };
+        }
         let as = [];
         d.attributes.attributes.data.map((da)=>{
             as.push({
@@ -101,6 +143,75 @@ module.exports = createCoreController('api::product.product', ({strapi})=>({
         data = a;
 
         return {data, meta};
+    },
+
+    async importdata(ctx) {
+
+        // // read csv file from src/products.csv
+        
+        // const results = [];
+        // const results2 = [];
+        // const results3 = [];
+
+
+        // fs.createReadStream('src/products.csv')
+        // .pipe(csv())
+        // .on('data', (data) => results.push(data))
+        // .on('end', async () => {
+            
+        //     results.map((r)=>{
+        //         results2.push({
+        //             title:r.title,
+        //             purchase_price:r.purchase_price,
+        //             sale_price:r.sale_price,
+        //             stock:r.stock,
+        //             unit:r.unit,
+        //             sub_category:r.sub_category,
+        //             published_at:dd,
+        //             created_by_id:1,
+        //             updated_by_id:1,
+        //             locale:'en'
+        //         })
+        //     });
+
+            
+        //     // push in products table
+        //     results2.map(async (rrr)=>{
+        //         await strapi.db.query('api::product.product').create(
+        //             {
+        //                 data:rrr
+        //             }
+        //         );
+        //     });
+            
+
+            
+        // });
+        const dd = new Date();
+
+        const {
+            title,
+            sale_price,
+            unit,
+            sub_category,
+        } = ctx.request.body;
+
+        var resss = await strapi.db.query('api::product.product').create({
+            data:{
+                title:title,
+                purchase_price:sale_price,
+                sale_price:sale_price,
+                stock:10,
+                unit:unit,
+                sub_category:sub_category,
+                published_at:dd,
+                created_by_id:1,
+                updated_by_id:1,
+                locale:'en'
+            }
+        });
+
+        return resss;
     },
 
     async searchsuggest(ctx) {
