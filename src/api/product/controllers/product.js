@@ -70,15 +70,9 @@ module.exports = createCoreController('api::product.product', ({strapi})=>({
 
             const sale_price = parseInt(a.attributes.sale_price - discountedVal);
             let i = {};
+            let imagee = null;
             if(d.attributes.image.data!=null && d.attributes.image.data.attributes.formats!=null){
-                i = {
-                    turl:d.attributes.image.data.attributes.formats.thumbnail.url,
-                    th:d.attributes.image.data.attributes.formats.thumbnail.height,
-                    tw:d.attributes.image.data.attributes.formats.thumbnail.width,
-                    url:d.attributes.image.data.attributes.url,
-                    h:d.attributes.image.data.attributes.height,
-                    w:d.attributes.image.data.attributes.width,
-                };
+                imagee = d.attributes.image.data.attributes.formats.thumbnail.url;
             }
             let as = [];
             d.attributes.attributes.data.map((da)=>{
@@ -87,10 +81,20 @@ module.exports = createCoreController('api::product.product', ({strapi})=>({
                 })
             })
             a.attributes.attributes = as;
-            a.attributes.unit = d.attributes.unit.data?.attributes?.title || "Uknown";
+            a.attributes.unit = d.attributes.unit?.data?.attributes?.title || "Uknown";
             a.attributes.image = i;
             a.attributes.original_price = a.attributes.sale_price;
             a.attributes.sale_price = sale_price;
+            a.attributes.id = d.id;
+            a.attributes.images = a.attributes.images?.data?.map((img)=>{
+                return {
+                    image: img.attributes.formats.thumbnail.url,
+                    url: img.attributes.url,
+                }
+            })
+            a.attributes.image = imagee;
+            // a = a.attributes;
+
             return a;
         })
 

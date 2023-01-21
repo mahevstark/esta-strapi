@@ -18,6 +18,16 @@ const sanitizeImage = (d) => {
     return i;
 }
 
+const makeThum = (d) => {
+    if(!d) return null;
+    let parts = d.split('/');
+    let allParts = parts.slice(0, parts.length - 1).join('/');
+    let lastPart = parts[parts.length - 1];
+    let img = allParts + '/thumbnail_' + lastPart;
+
+    return img;
+}
+
 module.exports = createCoreController('api::super-category.super-category',({strapi})=>({
 
     // async find(ctx) {
@@ -153,7 +163,7 @@ module.exports = createCoreController('api::super-category.super-category',({str
                                             },
                                             locale:'en'
                                         },
-                                        select:['id','title','subtitle','available','sale_price','stock','discount_type','discount'],
+                                        select:['id','title','subtitle','available','sale_price','stock','discount_type','discount', 'background_color'],
                                         populate:{
                                             image:{
                                                 select:['url']
@@ -161,7 +171,7 @@ module.exports = createCoreController('api::super-category.super-category',({str
                                             images:{
                                                 select:['url']
                                             },
-                                            units:{
+                                            unit:{
                                                 select:['title']
                                             },
                                             attributes:{
@@ -180,15 +190,19 @@ module.exports = createCoreController('api::super-category.super-category',({str
         // console.log('data',data);
 
         data = data?.map((d)=>{
-            d.image = d.image?.url?.replace('amazonaws.com/','amazonaws.com/thumbnail_');
+            
+
+            d.image = makeThum(d.image?.url);
             d.categories = d.categories?.map((c)=>{
-                c.image = c.image?.url?.replace('amazonaws.com/','amazonaws.com/thumbnail_');
+                c.image = makeThum(c.image?.url);
                 c.sub_categories = c.sub_categories?.map((sc)=>{
-                    sc.image = sc.image?.url?.replace('amazonaws.com/','amazonaws.com/thumbnail_');
+                    sc.image = makeThum(sc.image?.url);
                     sc.products = sc.products?.map((p)=>{
-                        p.image = p.image?.url?.replace('amazonaws.com/','amazonaws.com/thumbnail_');
+                        p.imager = p.image?.url;
+                        p.image = makeThum(p.image?.url);
+                        p.unit = p.unit?.title;
                         p.images = p.images?.map((i)=>{
-                            i.image = i.url?.replace('amazonaws.com/','amazonaws.com/thumbnail_');
+                            i.image = makeThum(i?.url);
                             return i;
                         })
                         return p;
@@ -199,6 +213,19 @@ module.exports = createCoreController('api::super-category.super-category',({str
             })
             return d;
         })
+
+        // store this data in a file
+        const fs = require('fs');
+        const path = require('path');
+        const filePath = path.join(__dirname, './../../../../public/data.json');
+        fs.writeFileSync(filePath, JSON.stringify(data), 'utf8', (err) => {
+            if (err) {
+                console.log('Error writing file', err);
+            } else {
+                console.log('Successfully wrote file');
+            }
+        });
+
 
         return data;
     },
