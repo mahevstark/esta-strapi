@@ -99,4 +99,107 @@ module.exports = createCoreController('api::super-category.super-category',({str
 
         return data;
     },
+    async compileData(ctx) {
+
+        // fetch all categories 
+
+        let data = await strapi.query('api::super-category.super-category').findMany(
+            {
+                where:{
+                    published_at:{
+                        $ne:null
+                    },
+                    locale:'en'
+                },
+                select: ['id', 'title','subtitle','available','not_available_reason','uid'],
+                populate: {
+                    image:{
+                        select:['url']
+                    },
+                    categories:{
+                        where:{
+                            $not:{
+                                published_at:null
+                            },
+                            locale:'en'
+                        },
+                        select: ['id', 'title','subtitle','uid'],
+                        populate:{
+                            image:{
+                                select:['url']
+                            },
+                            where:{
+                                $not:{
+                                    published_at:null
+                                },
+                                locale:'en'
+                            },
+                            sub_categories:{
+                                where:{
+                                    $not:{
+                                        published_at:null
+                                    },
+                                    locale:'en'
+                                },
+                                select: ['id', 'title','uid'],
+                                populate:{
+                                    image:{
+                                        select:['url']
+                                    },
+                                    products:{
+                                        where:{
+                                            $not:{
+                                                published_at:null
+                                            },
+                                            locale:'en'
+                                        },
+                                        select:['id','title','subtitle','available','sale_price','stock','discount_type','discount'],
+                                        populate:{
+                                            image:{
+                                                select:['url']
+                                            },
+                                            images:{
+                                                select:['url']
+                                            },
+                                            units:{
+                                                select:['title']
+                                            },
+                                            attributes:{
+                                                select:['title']
+                                            },
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                    }
+                }
+            }
+        );
+        
+        // console.log('data',data);
+
+        data = data?.map((d)=>{
+            d.image = d.image?.url?.replace('amazonaws.com/','amazonaws.com/thumbnail_');
+            d.categories = d.categories?.map((c)=>{
+                c.image = c.image?.url?.replace('amazonaws.com/','amazonaws.com/thumbnail_');
+                c.sub_categories = c.sub_categories?.map((sc)=>{
+                    sc.image = sc.image?.url?.replace('amazonaws.com/','amazonaws.com/thumbnail_');
+                    sc.products = sc.products?.map((p)=>{
+                        p.image = p.image?.url?.replace('amazonaws.com/','amazonaws.com/thumbnail_');
+                        p.images = p.images?.map((i)=>{
+                            i.image = i.url?.replace('amazonaws.com/','amazonaws.com/thumbnail_');
+                            return i;
+                        })
+                        return p;
+                    })
+                    return sc;
+                })
+                return c;
+            })
+            return d;
+        })
+
+        return data;
+    },
 }));

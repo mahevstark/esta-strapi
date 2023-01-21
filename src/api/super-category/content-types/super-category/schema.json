@@ -68,8 +68,7 @@
     "categories": {
       "type": "relation",
       "relation": "oneToMany",
-      "target": "api::category.category",
-      "mappedBy": "super_category"
+      "target": "api::category.category"
     },
     "subtitle": {
       "pluginOptions": {

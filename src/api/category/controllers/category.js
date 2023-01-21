@@ -34,5 +34,86 @@ module.exports = createCoreController('api::category.category', ({strapi})=>({
         
         const categories = await strapi.query('api::category.category').findMany({super_category: id});
         return categories;
-    }
+    },
+
+    async compileData(ctx) {
+
+        // fetch all categories 
+
+        let scategories = await strapi.query('api::super-category.super-category').findMany({
+            where:{
+                published_at:{
+                    $ne:null
+                },
+                locale:'en'
+            },
+            select:['id','title','subtitle'],
+            popluate:{
+                image:{
+                    select:['url']
+                },
+                categories:{
+
+                    where:{
+                        published_at:{
+                            $ne:null
+                        }
+                    },
+                    select:[
+                        'id',
+                        'title',
+                        'subtitle'
+                    ],
+                    populate:{
+                        image:{
+                            select:['url']
+                        },
+                        sub_categories:{
+                            where:{
+                                published_at:{
+                                    $ne:null
+                                }
+                            },
+                            select:['id','title','subtitle'],
+        
+                            populate:{
+                                products:{
+                                    where:{
+                                        published_at:{
+                                            $ne:null
+                                        }
+                                    },
+                                    select:['id','title','subtitle','available','sale_price','stock','discount_type','discount'],
+                                    populate:{
+                                        image:{
+                                            select:['url']
+                                        },
+                                        images:{
+                                            select:['url']
+                                        },
+                                        units:{
+                                            select:['title']
+                                        },
+                                        attributes:{
+                                            select:['title']
+                                        },
+                                    }
+                                }
+                            }
+                        },
+        
+                    }
+                }
+            }
+            
+        });
+
+        // categories = categories.map((d)=>{
+        //     d.thumbnail = d.image?.url?.replace('amazonaws.com/','amazonaws.com/thumbnail_');
+        //     return d;
+        // })
+
+
+        return scategories;
+    },
 }));

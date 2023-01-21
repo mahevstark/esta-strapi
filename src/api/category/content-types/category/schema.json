@@ -72,12 +72,6 @@
       },
       "type": "time"
     },
-    "super_category": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::super-category.super-category",
-      "inversedBy": "categories"
-    },
     "sub_categories": {
       "type": "relation",
       "relation": "oneToMany",

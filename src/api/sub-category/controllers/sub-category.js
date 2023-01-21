@@ -14,14 +14,17 @@ module.exports = createCoreController('api::sub-category.sub-category', ({strapi
 
         data = data.map((d)=>{
             let a = d;
-            const i = {
-                turl:d.attributes.image.data.attributes.formats.thumbnail.url,
-                th:d.attributes.image.data.attributes.formats.thumbnail.height,
-                tw:d.attributes.image.data.attributes.formats.thumbnail.width,
-                url:d.attributes.image.data.attributes.url,
-                h:d.attributes.image.data.attributes.height,
-                w:d.attributes.image.data.attributes.width,
-            };
+            let i = {};
+            if(d.attributes.image.data!=null){
+                i =  {
+                    turl:d.attributes.image.data.attributes.formats.thumbnail.url,
+                    th:d.attributes.image.data.attributes.formats.thumbnail.height,
+                    tw:d.attributes.image.data.attributes.formats.thumbnail.width,
+                    url:d.attributes.image.data.attributes.url,
+                    h:d.attributes.image.data.attributes.height,
+                    w:d.attributes.image.data.attributes.width,
+                };
+            }
             a.attributes.image = i;
             return a;
         })
