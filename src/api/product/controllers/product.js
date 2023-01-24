@@ -93,7 +93,7 @@ module.exports = createCoreController('api::product.product', ({strapi})=>({
                 }
             })
             a.attributes.image = imagee;
-            // a = a.attributes;
+            a = a.attributes;
 
             return a;
         })
