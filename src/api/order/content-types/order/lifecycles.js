@@ -12,6 +12,16 @@ module.exports = {
         console.log(orderSelf);
         const { name, push_token_android, push_token_ios } = orderSelf.users_permissions_user;
 
+        // post a request containing orderId to: https://hooks.airtable.com/workflows/v1/genericWebhook/appxSB5lt4hvlsNjd/wflYaRsTWHzYrcWBb/wtrRzyOlVZQLToeme
+        const axios = require('axios');
+        axios.post('https://hooks.airtable.com/workflows/v1/genericWebhook/appxSB5lt4hvlsNjd/wflYaRsTWHzYrcWBb/wtrRzyOlVZQLToeme', {
+            orderId: result.id
+        })
+        // .then(function (response) {
+        //     console.log(response);
+        // })
+
+
 
         sendPush(
             [push_token_android,push_token_ios],
