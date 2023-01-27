@@ -181,6 +181,14 @@
       "relation": "manyToOne",
       "target": "api::suggestion.suggestion",
       "inversedBy": "products"
+    },
+    "product_code": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "string"
     }
   }
 }

@@ -198,6 +198,8 @@ module.exports = createCoreController('api::product.product', ({strapi})=>({
             sale_price,
             unit,
             sub_category,
+
+            product_code,
         } = ctx.request.body;
 
         var resss = await strapi.db.query('api::product.product').create({
@@ -211,7 +213,8 @@ module.exports = createCoreController('api::product.product', ({strapi})=>({
                 published_at:dd,
                 created_by_id:1,
                 updated_by_id:1,
-                locale:'en'
+                locale:'en',
+                product_code:product_code
             }
         });
 
