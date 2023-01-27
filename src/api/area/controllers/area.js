@@ -2,6 +2,7 @@
 
 /**
  * area controller
+ * or redeploy
  */
 
 const { createCoreController } = require('@strapi/strapi').factories;
