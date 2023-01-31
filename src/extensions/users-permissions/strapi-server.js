@@ -139,7 +139,8 @@ module.exports = plugin => {
     plugin.controllers.user.storePushToken = async (ctx) => {
 
         const { id, push_token_android:o_android, push_token_ios: o_ios } = ctx.state.user;
-        const { token, platform } = ctx.request.body;
+        const { token, platform, deviceId, isDevice } = ctx.request.body;
+        console.log(isDevice);
 
         const user = await getService('user').fetch(id);
         if (!user) {
@@ -157,6 +158,32 @@ module.exports = plugin => {
             push_token_ios: platform=='ios'?token:o_ios,
         };
         await getService('user').edit(user.id, updateData);
+
+        // find device from devices table
+        const device = await strapi.db.query('api::device.device').findOne({
+            where:{
+                deviceId:deviceId,
+                // users_permissions_user: id
+            },
+            populate:['users_permissions_user'],
+        });
+
+        if(device){
+            // update device
+            await strapi.db.query('api::device.device').update({data:{
+                id:device.id,
+                users_permissions_user: id,
+                isDevice: isDevice,
+            }, where:{id:device.id}});
+        }else{
+            // create device
+            await strapi.db.query('api::device.device').create({data:{
+                deviceId:deviceId,
+                users_permissions_user: id,
+                isDevice: isDevice,
+            }});
+        }
+
         ctx.send({success:true});
     },
 

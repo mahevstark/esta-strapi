@@ -1,0 +1,40 @@
+{
+  "kind": "collectionType",
+  "collectionName": "devices",
+  "info": {
+    "singularName": "device",
+    "pluralName": "devices",
+    "displayName": "device",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "deviceId": {
+      "type": "string"
+    },
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "devices"
+    },
+    "warned": {
+      "type": "boolean",
+      "default": false
+    },
+    "banned": {
+      "type": "boolean",
+      "default": false
+    },
+    "phone": {
+      "type": "string"
+    },
+    "isDevice": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}

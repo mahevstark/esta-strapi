@@ -165,6 +165,12 @@
     "sales": {
       "type": "boolean",
       "default": false
+    },
+    "devices": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::device.device",
+      "mappedBy": "users_permissions_user"
     }
   }
 }
