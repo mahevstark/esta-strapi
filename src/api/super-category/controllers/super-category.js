@@ -133,6 +133,7 @@ module.exports = createCoreController('api::super-category.super-category',({str
                             },
                             locale:'en'
                         },
+                        orderBy: [{ category_order: 'asc' }],
                         select: ['id', 'title','subtitle','uid'],
                         populate:{
                             image:{
@@ -151,6 +152,7 @@ module.exports = createCoreController('api::super-category.super-category',({str
                                     },
                                     locale:'en'
                                 },
+                                orderBy: [{ sub_category_order: 'asc' }],
                                 select: ['id', 'title','uid'],
                                 populate:{
                                     image:{
@@ -164,6 +166,7 @@ module.exports = createCoreController('api::super-category.super-category',({str
                                             locale:'en'
                                         },
                                         select:['id','title','subtitle','available','sale_price','stock','discount_type','discount', 'background_color'],
+                                        orderBy: [{ product_order: 'asc' }],
                                         populate:{
                                             image:{
                                                 select:['url']
