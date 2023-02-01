@@ -14,7 +14,7 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
     async createme(ctx) {
         const { id, username, push_token_android, push_token_ios, balance } = ctx.state.user;
 
-        const { address_id, products, payment_method, scheduled, scheduled_for, notes,area:areaId, slip:s_slip, use_wallet:used_wallet, use_wallet_balance:used_wallet_balance } = ctx.request.body;
+        const { address_id, products, payment_method, scheduled, scheduled_for, notes,area:areaId, slip:s_slip, use_wallet:used_wallet, use_wallet_balance:used_wallet_balance, location } = ctx.request.body;
 
         const area = await strapi.db.query('api::area.area').findOne({
             where: {
@@ -34,6 +34,7 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
 
         let product_ids = []
         products.map((product)=>{
+            if(!product_ids.includes(product.id))
             product_ids.push(product.id)
         });
 
@@ -97,6 +98,8 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
                 // add tax to ptotal
                 tax += (taxp/100)*ptotal;
                 total_price += ptotal;
+
+                console.log(` ${product.name} - ${qty} - ${price} - ${ptotal} - ${pdiscount} - ${discount} - ${tax} - ${total_price}`);
             }
         });
 
@@ -144,6 +147,7 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
             used_wallet,
             used_wallet_balance,
             taxp:area.charge.tax,
+            location:location
         }
 
         

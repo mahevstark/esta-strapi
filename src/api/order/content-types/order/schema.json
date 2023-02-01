@@ -154,6 +154,9 @@
     "taxp": {
       "type": "decimal",
       "default": 0
+    },
+    "location": {
+      "type": "text"
     }
   }
 }

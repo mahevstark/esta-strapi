@@ -22,15 +22,20 @@ module.exports = {
         // })
 
 
-
-        sendPush(
-            [push_token_android,push_token_ios],
-            `👍 Hi ${name}, We have just received your order, we're picking and packing it carefully for you!`,
-            {
-                type:"NEW_ORDER",
-                orderId:result.id
-            }
-        );
+        try{
+            sendPush(
+                [push_token_android,push_token_ios],
+                `👍 Hi ${name}, We have just received your order, we're picking and packing it carefully for you!`,
+                {
+                    type:"NEW_ORDER",
+                    orderId:result.id
+                }
+            );
+            
+        }catch(e){
+            console.log(e);
+        }
+        
     },
 
     async afterUpdate(event){
