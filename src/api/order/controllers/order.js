@@ -99,7 +99,7 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
                 tax += (taxp/100)*ptotal;
                 total_price += ptotal;
 
-                console.log(` ${product.name} - ${qty} - ${price} - ${ptotal} - ${pdiscount} - ${discount} - ${tax} - ${total_price}`);
+                console.log(` ${product.title} - ${qty} - ${price} - ${ptotal} - ${pdiscount} - ${discount} - ${tax} - ${total_price}`);
             }
         });
 
@@ -147,9 +147,10 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
             used_wallet,
             used_wallet_balance,
             taxp:area.charge.tax,
-            location:location
+            location:JSON.stringify(location)
         }
 
+        
         
 
         const order = await strapi.service('api::order.order').create({data:order_data});
@@ -195,6 +196,7 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
                 await strapi.service('api::order-product.order-product').create({data:pdata});
             }
         });
+        console.log('total_price 10');
 
         return order;
     },
