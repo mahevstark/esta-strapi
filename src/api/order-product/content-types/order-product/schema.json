@@ -4,7 +4,8 @@
   "info": {
     "singularName": "order-product",
     "pluralName": "order-products",
-    "displayName": "order product"
+    "displayName": "order product",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -50,6 +51,15 @@
       "relation": "oneToOne",
       "target": "api::order-complain.order-complain",
       "inversedBy": "order_product"
+    },
+    "tax": {
+      "type": "decimal"
+    },
+    "tax_value": {
+      "type": "decimal"
+    },
+    "tax_title": {
+      "type": "string"
     }
   }
 }

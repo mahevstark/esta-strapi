@@ -59,16 +59,25 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
             where: {
                 id:product_ids,
                 available:true
+            },
+            populate:{
+                sub_category:{
+                    populate:{
+                        taxes:{
+                            fields:['tax','title']
+                        }
+                    }
+                }
             }
         });
         const count_total_orders = await strapi.query('api::order.order').count();
         const to_charge = area.charge;
         let total_price = 0;
-        let taxp = to_charge.tax;
         let tax = 0;
         let discount = 0;
         let service_fee = to_charge.service_fee;
         let delivery_charges = to_charge.delivery_charges;
+        let bag_fee = to_charge.bag;
         let order_uid = count_total_orders+1;
         let address_text = address.house + ', ' + address.block + ', ' + address.near;
 
@@ -78,7 +87,13 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
         products_real.map(async (product,index)=>{
             const oprod = products.find((p)=>p.id===product.id)
             if(oprod){
-            
+
+                let taxNew = 0;
+                let taxOfCat = product.sub_category.taxes;
+                taxOfCat.map((taxOfCat)=>{
+                    taxNew += taxOfCat.tax;
+                });
+                
                 let base_price = product.sale_price;
                 let pdiscount = 0;
                 if(product.discount_type==='percent') {
@@ -96,14 +111,14 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
                 
 
                 // add tax to ptotal
-                tax += (taxp/100)*ptotal;
+                tax += (taxNew/100)*ptotal;
                 total_price += ptotal;
 
-                console.log(` ${product.title} - ${qty} - ${price} - ${ptotal} - ${pdiscount} - ${discount} - ${tax} - ${total_price}`);
+                console.log(` ${product.title} - ${taxNew} - ${qty} - ${price} - ${ptotal} - ${pdiscount} - ${discount} - ${tax} - ${total_price}`);
             }
         });
 
-        const total_total = Math.ceil((total_price + tax + service_fee + delivery_charges));
+        const total_total = Math.ceil((total_price + tax + service_fee + delivery_charges + bag_fee));
         total_price = Math.ceil(total_price);
 
         // get the proof of payment if done by card
@@ -135,6 +150,7 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
             delivery_charges,
             discount,
             service_fee,
+            bag:bag_fee,
             payment_method,
             order_uid,
             address:address_id,
@@ -183,7 +199,13 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
             if(oprod){
             
                 let price = product.total_price;
-                
+                let taxTitles = [];
+                let taxNew = 0;
+                let taxOfCat = product.sub_category.taxes;
+                taxOfCat.map((taxOfCat)=>{
+                    taxNew += taxOfCat.tax;
+                    taxTitles.push(taxOfCat.title);
+                });
                 const pdata = {
                     order:orderId,
                     product:product.id,
@@ -191,12 +213,14 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
                     qty: product.qty || 1,
                     total:Math.ceil(price * (product.qty)),
                     discount:Math.ceil(price * (product.pdiscount)) || 0,
-                    notes:oprod?.notes
+                    notes:oprod?.notes,
+                    tax:taxNew,
+                    tax_value:Math.ceil((taxNew/100)*price),
+                    tax_title:taxTitles.join(', ')
                 }
                 await strapi.service('api::order-product.order-product').create({data:pdata});
             }
         });
-        console.log('total_price 10');
 
         return order;
     },
@@ -275,7 +299,29 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
                 id:data.id,
                 // users_permissions_user: id
             },
-            populate:['order_products','order_products.product','area','area.charge', 'slips', 'users_permissions_user'],
+            populate:{
+                area:{
+                    populate:['charge']
+                },
+                slips:{
+                    select:['id','payment_method','paid','status']
+                },
+                users_permissions_user:{
+                    select:['id','username','phoneNumber','email']
+                },
+                order_products:{
+                    select:['id','qty','price','total','discount','tax','tax_value','tax_title'],
+                    populate:{
+                        product:{
+                            populate:{
+                                image:{
+                                    select:['url']
+                                }
+                            }
+                        }
+                    }
+                }
+            },
         });
 
         if( !order ){

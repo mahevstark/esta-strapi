@@ -157,6 +157,9 @@
     },
     "location": {
       "type": "text"
+    },
+    "bag": {
+      "type": "integer"
     }
   }
 }

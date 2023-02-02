@@ -72,6 +72,11 @@
       "relation": "oneToMany",
       "target": "api::product.product",
       "mappedBy": "sub_category"
+    },
+    "taxes": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::tax.tax"
     }
   }
 }

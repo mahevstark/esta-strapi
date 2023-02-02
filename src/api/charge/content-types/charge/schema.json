@@ -42,6 +42,14 @@
       "relation": "oneToMany",
       "target": "api::area.area",
       "mappedBy": "charge"
+    },
+    "taxes": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::tax.tax"
+    },
+    "bag": {
+      "type": "integer"
     }
   }
 }

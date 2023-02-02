@@ -21,7 +21,7 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::order-product.order-product",
-      "inversedBy": "order_complain"
+      "mappedBy": "order_complain"
     },
     "status": {
       "type": "enumeration",
