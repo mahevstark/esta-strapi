@@ -315,14 +315,15 @@ module.exports = createCoreController('api::product.product', ({strapi})=>({
 
     async update_price(ctx) {
 
-        const { id,sale_price } = ctx.request.body;
+        const { id,sale_price,available } = ctx.request.body;
 
         let data = await strapi.db.query('api::product.product').update({
             where:{
                 id:id
             },
             data:{
-                sale_price:sale_price
+                sale_price:sale_price,
+                available:available
             }
         });
 
