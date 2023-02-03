@@ -9,14 +9,17 @@ module.exports = {
             where:{id: result.id},
             populate:['users_permissions_user']
         });
-        console.log(orderSelf);
-        const { name, push_token_android, push_token_ios } = orderSelf.users_permissions_user;
+        const { name, push_token_android, push_token_ios, phoneNumber } = orderSelf.users_permissions_user;
 
         // post a request containing orderId to: https://hooks.airtable.com/workflows/v1/genericWebhook/appxSB5lt4hvlsNjd/wflYaRsTWHzYrcWBb/wtrRzyOlVZQLToeme
         const axios = require('axios');
-        axios.post('https://hooks.airtable.com/workflows/v1/genericWebhook/appxSB5lt4hvlsNjd/wflYaRsTWHzYrcWBb/wtrRzyOlVZQLToeme', {
-            orderId: result.id
-        })
+        const payload = {
+            orderId: result.id,
+            name:name,
+            phone:phoneNumber
+        };
+        console.log(payload);
+        axios.post('https://hooks.airtable.com/workflows/v1/genericWebhook/appxSB5lt4hvlsNjd/wflYaRsTWHzYrcWBb/wtrRzyOlVZQLToeme', payload)
         // .then(function (response) {
         //     console.log(response);
         // })
