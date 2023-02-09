@@ -41,6 +41,33 @@ const sanitizeOutput = (user, ctx) => {
 module.exports = plugin => {
 
     let alone = plugin.routes
+
+    alone['content-api'].routes.push({
+        method: 'GET',
+        path: '/users/me56',
+        handler: 'user.deleteme56',
+        config: {
+            prefix: '',
+        },
+    });
+
+    alone['content-api'].routes.push({
+        method: 'GET',
+        path: '/deletemyaccount',
+        handler: 'user.deleteme56',
+        config: {
+            prefix: '',
+        },
+    });
+
+    alone['content-api'].routes.push({
+        method: 'GET',
+        path: '/deletemyaccountplease',
+        handler: 'user.deletemeplease',
+        config: {
+            prefix: '',
+        },
+    });
     alone['content-api'].routes.push({
         method: 'POST',
         path: '/auth/local/twillio',
@@ -67,6 +94,26 @@ module.exports = plugin => {
             prefix: '',
         },
     });
+
+    alone['content-api'].routes.push({
+        method: 'DELETE',
+        path: '/users/me33',
+        handler: 'user.deleteme',
+        config: {
+            prefix: '',
+        },
+    });
+
+    alone['content-api'].routes.push({
+        method: 'DELETE',
+        path: '/users/me55',
+        handler: 'user.deleteme55',
+        config: {
+            prefix: '',
+        },
+    });
+
+    
 
 
     alone['content-api'].routes.push({
@@ -133,6 +180,139 @@ module.exports = plugin => {
 
         // logout user
         const sanitizedData = await sanitizeOutput(data, ctx);
+        ctx.send(sanitizedData);
+    },
+
+    plugin.controllers.user.deleteme55 = async (ctx) => {
+
+        const {locale} = ctx.params;
+        const isUrdu = locale === 'ur-PK';
+
+        const advancedConfigs = await strapi
+            .store({ type: 'plugin', name: 'users-permissions', key: 'advanced' })
+            .get();
+
+        const { id } = ctx.state.user;
+        const { password } = ctx.request.body;
+
+        const user = await getService('user').fetch(id);
+        if (!user) {
+            throw new NotFoundError(`User not found`);
+        }
+
+        await validateUpdateUserBody(ctx.request.body);
+
+        if (user.provider === 'local' && _.has(ctx.request.body, 'password') && !password) {
+            throw new ValidationError('password.notNull');
+        }
+
+        const updateData = {
+            is_deleted:true,
+            deleted_at: new Date()
+        };
+
+        const data = await getService('user').edit(user.id, updateData);
+
+        // logout user
+        const sanitizedData = await sanitizeOutput(data, ctx);
+        ctx.send(sanitizedData);
+    },
+
+    plugin.controllers.user.deleteme56 = async (ctx) => {
+
+        const {locale} = ctx.params;
+        const isUrdu = locale === 'ur-PK';
+        console.log("deleteme56 1");
+        const advancedConfigs = await strapi
+            .store({ type: 'plugin', name: 'users-permissions', key: 'advanced' })
+            .get();
+            console.log("deleteme56 2");
+
+        const { id } = ctx.state.user;
+        const { password } = ctx.request.body;
+        console.log("deleteme56 3");
+
+        const user = await getService('user').fetch(id);
+        if (!user) {
+            console.log("user not found")
+            throw new NotFoundError(`User not found`);
+        }
+        console.log("deleteme56 4");
+
+        await validateUpdateUserBody(ctx.request.body);
+        console.log("deleteme56 5");
+
+        if (user.provider === 'local' && _.has(ctx.request.body, 'password') && !password) {
+        console.log("deleteme56 6");
+
+            throw new ValidationError('password.notNull');
+        }
+
+        console.log("deleteme56 7");
+
+
+        const updateData = {
+            is_deleted:true,
+            deleted_at: new Date()
+        };
+        console.log("deleteme56 8");
+
+        const data = await getService('user').edit(user.id, updateData);
+
+        console.log("deleteme56 9");
+        // logout user
+        const sanitizedData = await sanitizeOutput(data, ctx);
+        console.log("deleteme56 10");
+
+        ctx.send(sanitizedData);
+    },
+
+    plugin.controllers.user.deletemeplease = async (ctx) => {
+
+        const {locale} = ctx.params;
+        const isUrdu = locale === 'ur-PK';
+        console.log("deleteme56 1");
+        const advancedConfigs = await strapi
+            .store({ type: 'plugin', name: 'users-permissions', key: 'advanced' })
+            .get();
+            console.log("deleteme56 2");
+
+        const { id } = ctx.state.user;
+        const { password } = ctx.request.body;
+        console.log("deleteme56 3");
+
+        const user = await getService('user').fetch(id);
+        if (!user) {
+            console.log("user not found")
+            throw new NotFoundError(`User not found`);
+        }
+        console.log("deleteme56 4");
+
+        await validateUpdateUserBody(ctx.request.body);
+        console.log("deleteme56 5");
+
+        if (user.provider === 'local' && _.has(ctx.request.body, 'password') && !password) {
+        console.log("deleteme56 6");
+
+            throw new ValidationError('password.notNull');
+        }
+
+        console.log("deleteme56 7");
+
+
+        const updateData = {
+            is_deleted:true,
+            deleted_at: new Date()
+        };
+        console.log("deleteme56 8");
+
+        const data = await getService('user').edit(user.id, updateData);
+
+        console.log("deleteme56 9");
+        // logout user
+        const sanitizedData = await sanitizeOutput(data, ctx);
+        console.log("deleteme56 10");
+
         ctx.send(sanitizedData);
     },
 

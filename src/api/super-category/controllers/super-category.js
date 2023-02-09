@@ -23,7 +23,7 @@ const makeThum = (d) => {
     let parts = d.split('/');
     let allParts = parts.slice(0, parts.length - 1).join('/');
     let lastPart = parts[parts.length - 1];
-    let img = allParts + '/thumbnail_' + lastPart;
+    let img = allParts + '/small_' + lastPart;
 
     return img;
 }

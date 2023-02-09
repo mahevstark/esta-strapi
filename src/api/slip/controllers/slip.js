@@ -65,10 +65,21 @@ module.exports = createCoreController('api::slip.slip', ({ strapi }) => ({
         const slip = slips[0];
         
         // if(slip.paid) return ctx.badRequest(null,"Already paid");
-        console.log("PAYLOAD",payload);
-        console.log("type",type);
-        console.log("s",s);
-        console.log("slip",slip);
+        const axios = require('axios');
+
+        var $url = 'https://payments.bankalfalah.com/HS/api/IPN/OrderStatus/21159/027790/'+s;
+		
+        // fetch the url and get the response
+
+        const confirmResponse = await axios.get($url);
+
+        
+
+
+        console.log(confirmResponse.data);
+
+
+        
         if(type == 'success'){
 
             await strapi.entityService.update('api::slip.slip',slip.id, {data:{
