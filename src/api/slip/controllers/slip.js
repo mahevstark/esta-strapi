@@ -58,7 +58,7 @@ module.exports = createCoreController('api::slip.slip', ({ strapi }) => ({
     async payment_success_now(ctx) {
 
 
-        const { slip:s,type,payload } = ctx.request.body;
+        const { slip:s } = ctx.request.body;
 
         const slips = await strapi.db.query('api::slip.slip').findMany({where:{slip:s}});
         if(slips.length == 0) return ctx.badRequest(null,"Slip not found");
@@ -73,29 +73,25 @@ module.exports = createCoreController('api::slip.slip', ({ strapi }) => ({
 
         const confirmResponse = await axios.get($url);
 
+
+        let cc = JSON.parse(confirmResponse.data);
+        let type = "failed";
         
-
-
-        console.log(confirmResponse.data);
-
-
-        
-        if(type == 'success'){
-
+        if(cc["TransactionStatus"]=="Paid"){
             await strapi.entityService.update('api::slip.slip',slip.id, {data:{
                 status:'paid',
                 paid:true,
-                response_object:JSON.stringify(payload),
-                amount_paid:payload.amount
+                response_object:JSON.stringify(cc),
+                amount_paid:cc["TransactionAmount"]
             }});
-        }
 
-        if(type == 'failed'){
+            type = "success";
+        }else{
 
             await strapi.entityService.update('api::slip.slip',slip.id, {data:{
                 status:'failed',
                 paid:false,
-                response_object:JSON.stringify(payload),
+                response_object:JSON.stringify(cc),
                 amount_paid:0
             }});
         }

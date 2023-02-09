@@ -49,6 +49,11 @@
       "relation": "manyToOne",
       "target": "api::order.order",
       "inversedBy": "slips"
+    },
+    "wallet": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::wallet.wallet"
     }
   }
 }

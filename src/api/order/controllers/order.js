@@ -127,6 +127,14 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
             console.log('s_slip',s_slip);
             slip = await strapi.db.query('api::slip.slip').findMany({where:{slip:s_slip}, groupBy:['id']});
             slip = slip[0];
+
+            if(!slip){
+                return ctx.badRequest('Invalid slip');
+            }
+
+            if(slip.status!='paid'){
+                return ctx.badRequest('Invalid slip');
+            }
         }
 
         
@@ -174,7 +182,7 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
 
         // update slip for order relation with orderId
         if(payment_method=='card'){
-            await strapi.entityService.update('api::slip.slip', slip.id, {data:{order:orderId}});
+            await strapi.entityService.update('api::slip.slip', slip.id, {data:{order:orderId,status:'used'}});
         }
 
         

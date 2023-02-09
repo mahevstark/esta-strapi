@@ -28,6 +28,21 @@ module.exports = createCoreController('api::wallet.wallet', ({ strapi }) => ({
         
 
         const amount = parseInt(ctx.request.body.amount) || 0; 
+        const sslip = ctx.request.body.slip || null;
+
+
+
+        console.log('s_slip',sslip);
+        let slip = await strapi.db.query('api::slip.slip').findMany({where:{slip:sslip}, groupBy:['id']});
+        slip = slip[0];
+
+        if(!slip){
+            return ctx.badRequest('Invalid slip');
+        }
+
+        if(slip.status!='paid'){
+            return ctx.badRequest('Invalid slip');
+        }
 
         if(amount < 10){
             return ctx.badRequest('Minimum topup amount is 10');
@@ -43,8 +58,10 @@ module.exports = createCoreController('api::wallet.wallet', ({ strapi }) => ({
             reason:"User topup",
             users_permissions_user: id
         }
-        await strapi.db.query('api::wallet.wallet').create({data:walletEntry});
+        const data = await strapi.db.query('api::wallet.wallet').create({data:walletEntry});
         await getService('user').edit(id, {balance:(balance+amount)});
+
+        await strapi.entityService.update('api::slip.slip', slip.id, {data:{wallet:data.id,status:'used'}});
 
         return {balance:(balance+amount)};
     },
