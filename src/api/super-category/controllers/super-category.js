@@ -223,7 +223,7 @@ module.exports = createCoreController('api::super-category.super-category',({str
         // store this data in a file
         const fs = require('fs');
         const path = require('path');
-        const filePath = path.join(__dirname, './../../../../public/data.json');
+        let filePath = path.join(__dirname, './../../../../public/data.json');
         fs.writeFileSync(filePath, JSON.stringify(data), 'utf8', (err) => {
             if (err) {
                 console.log('Error writing file', err);
@@ -231,6 +231,33 @@ module.exports = createCoreController('api::super-category.super-category',({str
                 console.log('Successfully wrote file');
             }
         });
+
+        var minified = {};
+
+        data.map((sp)=>{
+            sp.categories.map((c)=>{
+                c.sub_categories.map((sp)=>{
+                    sp.products.map((p)=>{
+
+                        minified[p.id] = [
+                            p.stock,
+                            p.sale_price,
+                            p.available
+                        ];
+                    })
+                })
+            })
+        })
+        filePath = path.join(__dirname, './../../../../public/mindata.json');
+        fs.writeFileSync(filePath, JSON.stringify(minified), 'utf8', (err) => {
+            if (err) {
+                console.log('Error writing file', err);
+            } else {
+                console.log('Successfully wrote file');
+            }
+        });
+
+        // upload this file to s3
 
 
         return data;
