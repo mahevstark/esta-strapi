@@ -4,7 +4,8 @@
   "info": {
     "singularName": "guest",
     "pluralName": "guests",
-    "displayName": "guest"
+    "displayName": "guest",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -12,6 +13,12 @@
   "pluginOptions": {},
   "attributes": {
     "push_token": {
+      "type": "text"
+    },
+    "device_id": {
+      "type": "string"
+    },
+    "location": {
       "type": "text"
     }
   }
