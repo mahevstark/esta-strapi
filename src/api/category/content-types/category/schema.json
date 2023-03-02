@@ -31,8 +31,7 @@
           "localized": true
         }
       },
-      "type": "string",
-      "default": "Food, Drink, Enjoy"
+      "type": "string"
     },
     "uid": {
       "pluginOptions": {
@@ -77,6 +76,20 @@
       "relation": "oneToMany",
       "target": "api::sub-category.sub-category",
       "mappedBy": "category"
+    },
+    "car_id": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "string"
+    },
+    "super_category": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::super-category.super-category",
+      "inversedBy": "categories"
     }
   }
 }

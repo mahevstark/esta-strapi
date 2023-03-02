@@ -77,6 +77,14 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::tax.tax"
+    },
+    "car_id": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "string"
     }
   }
 }

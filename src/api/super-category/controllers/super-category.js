@@ -205,7 +205,7 @@ module.exports = createCoreController('api::super-category.super-category',({str
                     sc.image = makeThum(sc.image?.url);
                     sc.products = sc.products?.map((p)=>{
                         p.imager = p.image?.url;
-                        p.image = makeThum(p.image?.url);
+                        p.image = p.image?.url; //makeThum(p.image?.url);
                         p.unit = p.unit?.title;
                         p.images = p.images?.map((i)=>{
                             i.image = makeThum(i?.url);

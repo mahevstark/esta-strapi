@@ -151,6 +151,8 @@ module.exports = createCoreController('api::product.product', ({strapi})=>({
 
     async importdata(ctx) {
 
+        
+
         // // read csv file from src/products.csv
         
         // const results = [];
@@ -198,25 +200,64 @@ module.exports = createCoreController('api::product.product', ({strapi})=>({
             sale_price,
             unit,
             sub_category,
-
             product_code,
+            car_id,
+            stock,
+            token,
+            available
         } = ctx.request.body;
 
-        var resss = await strapi.db.query('api::product.product').create({
-            data:{
-                title:title,
-                purchase_price:sale_price,
-                sale_price:sale_price,
-                stock:10,
-                unit:unit,
-                sub_category:sub_category,
-                published_at:dd,
-                created_by_id:1,
-                updated_by_id:1,
-                locale:'en',
-                product_code:product_code
+        if(token!='fucyou') throw new Error('403 Forbidden');
+
+
+        let d = {
+            title:title,
+            purchase_price:sale_price,
+            sale_price:sale_price,
+            stock:stock?stock:10,
+            unit:unit,
+            sub_category:sub_category,
+            publishedAt:dd,
+            locale:'en',
+            available
+        };
+
+        if(product_code){
+            d.product_code = product_code;
+        }
+
+        if(car_id){
+            d.car_id = car_id;
+        }
+
+        if(car_id){
+
+            let existingProduct = await strapi.db.query('api::product.product').findOne({
+                where:{
+                    car_id:car_id
+                }
+            });
+
+            if(existingProduct){
+                console.log('existingProduct', existingProduct);
+                const r = await strapi.db.query('api::product.product').update({
+                    where:{
+                        id:existingProduct.id
+                    },
+                    data:d
+                });
+                return {updated:true,data:r};
             }
+        }
+
+        
+
+
+        var resss = await strapi.db.query('api::product.product').create({
+            data:d
         });
+
+        return {updated:false,data:resss};
 
         return resss;
     },
@@ -315,7 +356,7 @@ module.exports = createCoreController('api::product.product', ({strapi})=>({
 
     async update_price(ctx) {
 
-        const { id,sale_price,available } = ctx.request.body;
+        const { id,sale_price,available,stock } = ctx.request.body;
 
         let data = await strapi.db.query('api::product.product').update({
             where:{
@@ -323,7 +364,8 @@ module.exports = createCoreController('api::product.product', ({strapi})=>({
             },
             data:{
                 sale_price:sale_price,
-                available:available
+                available:available,
+                stock:stock
             }
         });
 

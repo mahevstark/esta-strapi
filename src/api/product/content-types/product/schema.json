@@ -189,6 +189,14 @@
         }
       },
       "type": "string"
+    },
+    "car_id": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "string"
     }
   }
 }

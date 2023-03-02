@@ -116,4 +116,38 @@ module.exports = createCoreController('api::category.category', ({strapi})=>({
 
         return scategories;
     },
+
+    async createOrUpdate(ctx) {
+
+        const { title, car_id, token} = ctx.request.body;
+
+        if(token!='fucyou') throw new Error('403 Forbidden');
+
+        let findFirst= await strapi.query('api::category.category').findOne({where:{car_id}});
+        const dd = new Date();
+
+        if(findFirst){
+            let body = {
+                where:{id:findFirst.id},
+                data:{
+                    title,
+                    publishedAt:dd
+                }
+            };
+            let data = await strapi.query('api::category.category').update(body);
+
+            console.log(body);
+            return data;
+        }
+
+        let data = await strapi.query('api::category.category').create({
+            data:{
+            title,
+            super_category:1,
+            car_id,
+            publishedAt:dd
+        }});
+
+        return data;
+    },
 }));

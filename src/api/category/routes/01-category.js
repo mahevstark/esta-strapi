@@ -12,6 +12,14 @@ module.exports = {
             path: '/categories/compile-data/:id',
             handler: 'category.compileData',
         },
+
+        { // Path defined with an URL parameter
+            method: 'POST',
+            path: '/categories/createOrUpdate',
+            handler: 'category.createOrUpdate',
+        },
+
+
         
     ]
 }
