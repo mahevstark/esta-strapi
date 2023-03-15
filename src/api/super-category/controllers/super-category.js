@@ -165,7 +165,7 @@ module.exports = createCoreController('api::super-category.super-category',({str
                                             },
                                             locale:'en'
                                         },
-                                        select:['id','title','subtitle','available','sale_price','stock','discount_type','discount', 'background_color', 'product_code'],
+                                        select:['id','title','subtitle','available','sale_price','stock','discount_type','discount', 'background_color', 'product_code','car_id'],
                                         // orderBy: [{ product_order: 'asc' }],
                                         populate:{
                                             image:{
@@ -233,6 +233,7 @@ module.exports = createCoreController('api::super-category.super-category',({str
         });
 
         var minified = {};
+        var carified = {};
 
         data.map((sp)=>{
             sp.categories.map((c)=>{
@@ -244,12 +245,28 @@ module.exports = createCoreController('api::super-category.super-category',({str
                             p.sale_price,
                             p.available
                         ];
+
+                        carified[p.car_id] = [
+                            p.stock,
+                            p.sale_price,
+                            p.available,
+                            p.id
+                        ];
                     })
                 })
             })
         })
         filePath = path.join(__dirname, './../../../../public/mindata.json');
         fs.writeFileSync(filePath, JSON.stringify(minified), 'utf8', (err) => {
+            if (err) {
+                console.log('Error writing file', err);
+            } else {
+                console.log('Successfully wrote file');
+            }
+        });
+
+        filePath = path.join(__dirname, './../../../../public/carified.json');
+        fs.writeFileSync(filePath, JSON.stringify(carified), 'utf8', (err) => {
             if (err) {
                 console.log('Error writing file', err);
             } else {
