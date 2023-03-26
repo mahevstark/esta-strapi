@@ -239,10 +239,7 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
                 }
                 pdatas.push(pdata);
                 // await this.sleep(1000);
-
-                const row = await strapi.entityService.create('api::order-product.order-product', {
-                    data:pdata,
-                });
+                await this.inserter(pdata);
                 
 
             }else{
@@ -253,6 +250,31 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
 
 
         return order;
+    },
+    async inserter(data){
+
+
+        try{
+            const row = await strapi.entityService.create('api::order-product.order-product', {
+                data:data,
+            });
+
+            await strapi.entityService.findOne('api::order-product.order-product', row.id);
+            await strapi.entityService.findOne('api::order-product.order-product', row.id);
+            await strapi.entityService.findOne('api::order-product.order-product', row.id);
+            await strapi.entityService.findOne('api::order-product.order-product', row.id);
+            await strapi.entityService.findOne('api::order-product.order-product', row.id);
+            await strapi.entityService.findOne('api::order-product.order-product', row.id);
+            await strapi.entityService.findOne('api::order-product.order-product', row.id);
+            await strapi.entityService.findOne('api::order-product.order-product', row.id);
+            await strapi.entityService.findOne('api::order-product.order-product', row.id);
+        }catch(e){
+            console.log('fucking deadlock ------------------------------------------');
+            // wait for settimeout
+            await this.sleep(1000);
+            await this.inserter(data);
+        }
+
     },
 
     // make an async function that when called with await will hold the execution for 3 seconds
