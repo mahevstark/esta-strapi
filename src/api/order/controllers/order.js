@@ -15,7 +15,7 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
         const { id, username, push_token_android, push_token_ios, balance } = ctx.state.user;
 
         const { address_id, products, payment_method, scheduled, scheduled_for, notes,area:areaId, slip:s_slip, use_wallet:used_wallet, use_wallet_balance:used_wallet_balance, location } = ctx.request.body;
-
+        console.log('products length 1', products.length);
         const area = await strapi.db.query('api::area.area').findOne({
             where: {
                 id: areaId,
@@ -37,6 +37,9 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
             if(!product_ids.includes(product.id))
             product_ids.push(product.id)
         });
+
+        console.log('products length 2', product_ids.length);
+
 
         console.log('address_id',address_id);
 
@@ -70,6 +73,9 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
                 }
             }
         });
+
+        console.log('products length 3', products_real.length);
+
         const count_total_orders = await strapi.query('api::order.order').count();
         const to_charge = area.charge;
         let total_price = 0;
@@ -199,8 +205,10 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
 
 
         }
-        
-
+        await this.sleep(1000);
+        let d = new Date();
+        let dISO = d.toISOString();
+        let pdatas = [];
         products_real.map(async (product)=>{
 
             const oprod = products.find((p)=>p.id===product.id)
@@ -224,14 +232,36 @@ module.exports = createCoreController('api::order.order',({strapi})=>({
                     notes:oprod?.notes,
                     tax:taxNew,
                     tax_value:Math.ceil((taxNew/100)*price),
-                    tax_title:taxTitles.join(', ')
+                    tax_title:taxTitles.join(', '),
+                    published_at: dISO,
+                    tmp_o_id:orderId,
+                    tmp_p_id:product.id,
                 }
-                await strapi.service('api::order-product.order-product').create({data:pdata});
+                pdatas.push(pdata);
+                // await this.sleep(1000);
+
+                const row = await strapi.entityService.create('api::order-product.order-product', {
+                    data:pdata,
+                });
+                
+
+            }else{
+                console.log('----------not added title: ', product);
             }
         });
+        
+
 
         return order;
     },
+
+    // make an async function that when called with await will hold the execution for 3 seconds
+    async sleep(ms) {
+        return new Promise((resolve) => {
+            setTimeout(resolve, ms);
+        });
+    },
+
 
     async mine(ctx) {
         const { id } = ctx.state.user;

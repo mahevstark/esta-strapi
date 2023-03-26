@@ -128,8 +128,8 @@ module.exports = createCoreController('api::super-category.super-category',({str
                     },
                     categories:{
                         where:{
-                            $not:{
-                                published_at:null
+                            published_at:{
+                                $ne:null
                             },
                             locale:'en'
                         },
@@ -140,15 +140,15 @@ module.exports = createCoreController('api::super-category.super-category',({str
                                 select:['url']
                             },
                             where:{
-                                $not:{
-                                    published_at:null
+                                published_at:{
+                                    $ne:null
                                 },
                                 locale:'en'
                             },
                             sub_categories:{
                                 where:{
-                                    $not:{
-                                        published_at:null
+                                    published_at:{
+                                        $ne:null
                                     },
                                     locale:'en'
                                 },
@@ -160,8 +160,8 @@ module.exports = createCoreController('api::super-category.super-category',({str
                                     },
                                     products:{
                                         where:{
-                                            $not:{
-                                                published_at:null
+                                            published_at:{
+                                                $ne:null
                                             },
                                             locale:'en'
                                         },

@@ -12,12 +12,6 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "order": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::order.order",
-      "inversedBy": "order_products"
-    },
     "product": {
       "type": "relation",
       "relation": "oneToOne",
@@ -60,6 +54,18 @@
     },
     "tax_title": {
       "type": "string"
+    },
+    "order": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::order.order",
+      "inversedBy": "order_products"
+    },
+    "tmp_o_id": {
+      "type": "integer"
+    },
+    "tmp_p_id": {
+      "type": "integer"
     }
   }
 }

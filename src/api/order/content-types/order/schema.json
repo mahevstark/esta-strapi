@@ -63,12 +63,6 @@
         "mix"
       ]
     },
-    "order_products": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::order-product.order-product",
-      "mappedBy": "order"
-    },
     "address": {
       "type": "relation",
       "relation": "oneToOne",
@@ -160,6 +154,12 @@
     },
     "bag": {
       "type": "integer"
+    },
+    "order_products": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::order-product.order-product",
+      "mappedBy": "order"
     }
   }
 }
