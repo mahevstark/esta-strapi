@@ -279,4 +279,30 @@ module.exports = createCoreController('api::super-category.super-category',({str
 
         return data;
     },
+    async turnOffProducts(ctx) {
+
+        // update products set published at null where published_at is not null and product_code is not Bakar
+        const {token} = ctx.request.body;
+
+        if(token !== 'super-secret-token-lol-essa-lol-essa'){
+            return false;
+        }
+        let data = await strapi.db.query('api::product.product').updateMany({
+            where:{
+                published_at:{
+                    $ne:null
+                },
+                product_code:{
+                    $ne:'Bakar'
+                }
+            },
+            data:{
+                published_at:null
+            }
+    });
+
+
+        
+        return true;
+    },
 }));
