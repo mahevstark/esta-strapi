@@ -289,20 +289,24 @@ module.exports = createCoreController('api::super-category.super-category',({str
         }
         let data = await strapi.db.query('api::product.product').updateMany({
             where:{
-                published_at:{
-                    $ne:null
-                },
-                product_code:{
-                    $ne:'Bakar'
-                }
+                background_color:'#ffffff'
             },
             data:{
-                published_at:null
+                publishedAt:null
             }
-    });
+        });
+
+        let data2 = await strapi.db.query('api::product.product').updateMany({
+            where:{
+                product_code:'Bakar'
+            },
+            data:{
+                publishedAt:'2023-04-03T10:38:28.829Z'
+            }
+        });
 
 
         
-        return true;
+        return [data,data2];
     },
 }));
