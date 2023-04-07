@@ -7,8 +7,7 @@
     "develop": "strapi develop",
     "start": "strapi start",
     "build": "strapi build",
-    "strapi": "strapi",
-    "postinstall": "patch-package"
+    "strapi": "strapi"
   },
   "devDependencies": {},
   "dependencies": {
@@ -18,7 +17,6 @@
     "@strapi/provider-email-sendgrid": "^4.6.0",
     "@strapi/provider-upload-aws-s3": "^4.3.8",
     "@strapi/strapi": "4.6.0",
-    "@surunnuage/strapi-plugin-expo-notifications": "^1.0.7",
     "add": "^2.0.6",
     "axios": "^0.21.4",
     "better-sqlite3": "7.4.6",
@@ -27,8 +25,6 @@
     "fs": "^0.0.1-security",
     "md5": "^2.3.0",
     "mysql": "^2.18.1",
-    "patch-package": "^6.5.1",
-    "postinstall-postinstall": "^2.1.0",
     "strapi-plugin-io": "^1.1.2",
     "twilio": "^3.82.0",
     "uuid": "^9.0.0",

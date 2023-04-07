@@ -34,19 +34,5 @@ module.exports = createCoreController('api::guest.guest' , ({strapi})=>({
 
         let data = await strapi.query('api::guest.guest').create(ctx.request.body);
         return data;
-    },
-    
-    async find(ctx){
-        let data = await strapi.db.query('api::guest.guest').findMany({
-            where:{
-                id:{
-                    $ne:0
-                },
-                pushToken:{
-                    $ne:null
-                }
-            }
-        });
-        return data;
     }
 }));
