@@ -9,14 +9,16 @@ module.exports = ({ env }) => ({
   //   useNullAsDefault: true,
   // },
   connection: {
-    client: 'mysql',
+    client: 'mysql2',
     connection: {
       host: env('DATABASE_HOST', 'localhost'),
       port: env.int('DATABASE_PORT', 3306),
       database: env('DATABASE_NAME', 'estav2'),
       user: env('DATABASE_USERNAME', 'root'),
       password: env('DATABASE_PASSWORD', 'mysql'),
-      ssl: env.bool('DATABASE_SSL', true),
+      ssl : {
+        rejectUnauthorized: env.bool('DATABASE_SSL', false)
+      }
     },
   },
 });
