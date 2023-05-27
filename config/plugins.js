@@ -49,7 +49,7 @@ module.exports = ({ env }) => ({
     "expo-notifications": {
         enabled: true,
         config: {
-            customFieldName: "push_token",
+            customFieldName: "push_token_android",
         }
     },
     // ...
